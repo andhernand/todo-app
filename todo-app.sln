@@ -41,6 +41,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dotfiles", "dotfiles", "{7B
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{93191A21-DC72-4853-A4B7-D0C33C4E4D52}"
+	ProjectSection(SolutionItems) = preProject
+		.github\CODEOWNERS = .github\CODEOWNERS
+		.github\dependabot.yml = .github\dependabot.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{9264E940-8850-4E67-975F-AE385F48DB13}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build-and-test-application.yml = .github\workflows\build-and-test-application.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -80,6 +91,7 @@ Global
 		{1858083A-86D2-4FE6-9577-1C9487EE7302} = {279E29BE-4A47-43FC-BDBC-CE66123DD724}
 		{72882B61-34C0-4D15-988A-78B7FF7B02C2} = {2AF4B34B-5CAF-4A09-B242-F57CBE98A927}
 		{CCF0CF09-7CF7-4C95-ABB0-964F00C4236E} = {C83CA5AF-9ACC-4CB1-A25F-F87F6580E58E}
+		{9264E940-8850-4E67-975F-AE385F48DB13} = {93191A21-DC72-4853-A4B7-D0C33C4E4D52}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A79B88BE-1786-4BE3-8F67-9508A0EFDC59}
