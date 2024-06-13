@@ -109,6 +109,40 @@ public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoAp
         errors.Should().BeEquivalentTo(expected);
     }
 
+    [Fact]
+    public async Task GetTodoById_WhenTodoExists_ShouldReturnTodo()
+    {
+        // Arrange
+        using var client = _factory.CreateClient();
+        var expected = await Mother.CreateTodoAsync(client);
+        _createdTodos.Add(expected.Id);
+
+        // Act
+        var response = await client.GetAsync($"{Mother.TodosBasePath}/{expected.Id}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var actual = await response.Content.ReadFromJsonAsync<TodoResponse>();
+        actual.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
+    public async Task GetTodoById_WhenTodoDoesNotExist_ShouldReturnNotFound()
+    {
+        // Arrange
+        using var client = _factory.CreateClient();
+        var badId = Mother.GeneratePositiveLong();
+        var expected = Mother.GenerateNotFoundProblemDetails();
+
+        // Act
+        var response = await client.GetAsync($"{Mother.TodosBasePath}/{badId}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        var errors = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        errors.Should().BeEquivalentTo(expected);
+    }
+
     public Task InitializeAsync() => Task.CompletedTask;
 
     public async Task DisposeAsync()
