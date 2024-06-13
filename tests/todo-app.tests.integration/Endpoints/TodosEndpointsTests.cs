@@ -13,6 +13,22 @@ public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoAp
     private readonly List<long> _createdTodos = [];
 
     [Fact]
+    public async Task HealthCheck_WhenHealthy_ReturnsHealthy()
+    {
+        // Arrange
+        using var client = _factory.CreateClient();
+
+        // Act
+        var response = await client.GetAsync("/_health");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var message = await response.Content.ReadAsStringAsync();
+        message.Should().Be("Healthy");
+    }
+
+    [Fact]
     public async Task CreateTodo_WhenDataIsCorrect_ShouldCreateTodo()
     {
         // Arrange
