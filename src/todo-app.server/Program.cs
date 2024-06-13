@@ -1,9 +1,18 @@
+using Serilog;
+
 using TodoApp.Core;
 using TodoApp.Core.Database;
+using TodoApp.Server.Endpoints;
 using TodoApp.Server.Health;
+using TodoApp.Server.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 using var config = builder.Configuration;
+
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(config)
+    .CreateLogger();
+builder.Host.UseSerilog();
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
@@ -28,6 +37,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseHealthChecks(new PathString("/_health"));
+
+app.UseMiddleware<ValidationMappingMiddleware>();
+app.MapApiEndpoints();
 
 app.Run();
