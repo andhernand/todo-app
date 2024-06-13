@@ -159,6 +159,44 @@ public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoAp
         errors.Should().BeEquivalentTo(expected);
     }
 
+    [Fact]
+    public async Task GetAllTodos_WhenTodosExist_ShouldReturnTodos()
+    {
+        // Arrange
+        using var client = _factory.CreateClient();
+        var todo1 = await Mother.CreateTodoAsync(client);
+        _createdTodos.Add(todo1.Id);
+        var todo2 = await Mother.CreateTodoAsync(client);
+        _createdTodos.Add(todo2.Id);
+        var todo3 = await Mother.CreateTodoAsync(client);
+        _createdTodos.Add(todo3.Id);
+
+        var expected = new TodosResponse { Todos = new[] { todo1, todo2, todo3 } };
+
+        // Act
+        var response = await client.GetAsync(Mother.TodosBasePath);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var actual = await response.Content.ReadFromJsonAsync<TodosResponse>();
+        actual.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
+    public async Task GetAllTodos_WhenTodosDoNotExist_ShouldReturnNoTodos()
+    {
+        // Arrange
+        using var client = _factory.CreateClient();
+
+        // Act
+        var response = await client.GetAsync(Mother.TodosBasePath);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var actual = await response.Content.ReadFromJsonAsync<TodosResponse>();
+        actual!.Todos.Should().BeEmpty();
+    }
+
     public Task InitializeAsync() => Task.CompletedTask;
 
     public async Task DisposeAsync()

@@ -6,5 +6,7 @@ public static class TodosEndpointsExtensions
     {
         builder.MapCreateTodoEndpoint();
         builder.MapGetTodoByIdEndpoint();
+        builder.MapGetAllTodosEndpoint();
+        builder.MapDeleteTodoEndpoint();
     }
 }

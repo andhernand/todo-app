@@ -36,8 +36,14 @@ public class TodoService(ITodoRepository _repository, IValidator<Todo> _validato
         return todo;
     }
 
-    public Task<bool> DeleteAsync(long id, CancellationToken token = default)
+    public async Task<bool> DeleteAsync(long id, CancellationToken token = default)
     {
-        return _repository.DeleteAsync(id, token);
+        var exists = await _repository.ExistsById(id, token);
+        if (!exists)
+        {
+            return false;
+        }
+
+        return await _repository.DeleteAsync(id, token);
     }
 }
