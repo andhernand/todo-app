@@ -13,7 +13,7 @@ using TodoApp.Server;
 
 namespace Todo.App.Tests.Integration;
 
-public class TodoAppFactory : WebApplicationFactory<ITodoAppMarker>, IAsyncLifetime
+public class TodoApiFactory : WebApplicationFactory<ITodoAppMarker>, IAsyncLifetime
 {
     private static readonly string ApiUserName;
     private static readonly string ApiPassword;
@@ -27,12 +27,12 @@ public class TodoAppFactory : WebApplicationFactory<ITodoAppMarker>, IAsyncLifet
         .WithEnvironment("MSSQL_PID", "Developer")
         .Build();
 
-    static TodoAppFactory()
+    static TodoApiFactory()
     {
         Env.TraversePath().Load();
 
-        ApiUserName = GetEnvironmentVariableOrThrow(VariableNames.TodoApiPassword);
-        ApiPassword = GetEnvironmentVariableOrThrow(VariableNames.TodoApiUserName);
+        ApiUserName = GetEnvironmentVariableOrThrow(VariableNames.TodoApiUserName);
+        ApiPassword = GetEnvironmentVariableOrThrow(VariableNames.TodoApiPassword);
         SaPassword = GetEnvironmentVariableOrThrow(VariableNames.TodoSaPassword);
         RootFolder = DirectoryFinder.GetDirectoryContaining(VariableNames.TodoSolutionFile)
                      ?? throw new DirectoryNotFoundException("Solution folder not found");

@@ -47,9 +47,12 @@ public static class Mother
         return new ProblemDetails { Status = StatusCodes.Status404NotFound };
     }
 
-    public static async Task<TodoResponse> CreateTodoAsync(HttpClient client)
+    public static async Task<TodoResponse> CreateTodoAsync(
+        HttpClient client,
+        string? description = default,
+        bool? isCompleted = default)
     {
-        var request = GenerateCreateTodoRequest();
+        var request = GenerateCreateTodoRequest(description: description, isCompleted: isCompleted);
         var response = await client.PostAsJsonAsync(TodosBasePath, request);
         var todo = await response.Content.ReadFromJsonAsync<TodoResponse>();
         return todo!;

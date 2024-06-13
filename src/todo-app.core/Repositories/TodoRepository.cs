@@ -27,7 +27,7 @@ public class TodoRepository(IDbConnectionFactory _dbConnectionFactory) : ITodoRe
             commandType: CommandType.StoredProcedure,
             cancellationToken: token));
 
-        var id = parameters.Get<int>("@TodoId");
+        var id = parameters.Get<long>("@TodoId");
         return id;
     }
 
