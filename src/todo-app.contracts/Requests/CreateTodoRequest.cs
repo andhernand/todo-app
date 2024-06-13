@@ -1,4 +1,4 @@
-﻿namespace Todo.App.Contracts.Requests;
+﻿namespace TodoApp.Contracts.Requests;
 
 public record CreateTodoRequest
 {

@@ -1,4 +1,4 @@
-﻿namespace Todo.App.Contracts.Responses;
+﻿namespace TodoApp.Contracts.Responses;
 
 public record TodoResponse
 {
