@@ -198,6 +198,127 @@ public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoAp
     }
 
     [Fact]
+    public async Task UpdateTodo_WhenDataIsCorrect_ShouldUpdateTodo()
+    {
+        // Arrange
+        using var client = _factory.CreateClient();
+
+        var todo = await Mother.CreateTodoAsync(client);
+        _createdTodos.Add(todo.Id);
+
+        var request = Mother.GenerateUpdateTodoRequest(todo.Description, !todo.IsCompleted);
+        var expected = new TodoResponse
+        {
+            Id = todo.Id, Description = request.Description, IsCompleted = request.IsCompleted
+        };
+
+        // Act
+        var response = await client.PutAsJsonAsync($"{Mother.TodosBasePath}/{todo.Id}", request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var actual = await response.Content.ReadFromJsonAsync<TodoResponse>();
+        actual.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
+    public async Task UpdateTodo_WhenDescriptionIsInvalid_ShouldReturnBadRequest()
+    {
+        // Arrange
+        using var client = _factory.CreateClient();
+
+        var todo = await Mother.CreateTodoAsync(client);
+        _createdTodos.Add(todo.Id);
+
+        var request = Mother.GenerateUpdateTodoRequest("", false);
+        var expected = Mother.GenerateValidationProblemDetails(new Dictionary<string, string[]>
+        {
+            { "Description", ["'Description' must not be empty."] }
+        });
+
+        // Act
+        var response = await client.PutAsJsonAsync($"{Mother.TodosBasePath}/{todo.Id}", request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var errors = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        errors.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
+    public async Task UpdateTodo_WhenTodoDoesNotExist_ShouldReturnNotFound()
+    {
+        // Arrange
+        using var client = _factory.CreateClient();
+        var request = Mother.GenerateUpdateTodoRequest();
+        var badId = Mother.GeneratePositiveLong();
+        var expected = Mother.GenerateNotFoundProblemDetails();
+
+        // Act
+        var response = await client.PutAsJsonAsync($"{Mother.TodosBasePath}/{badId}", request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        var errors = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        errors.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
+    public async Task UpdateTodo_WhenDescriptionIsDuplicated_ShouldReturnBadRequest()
+    {
+        // Arrange
+        using var client = _factory.CreateClient();
+
+        var todo1 = await Mother.CreateTodoAsync(client);
+        _createdTodos.Add(todo1.Id);
+        var todo2 = await Mother.CreateTodoAsync(client);
+        _createdTodos.Add(todo2.Id);
+
+        var request = Mother.GenerateUpdateTodoRequest(description: todo1.Description, isCompleted: todo2.IsCompleted);
+        var expected = Mother.GenerateValidationProblemDetails(new Dictionary<string, string[]>
+        {
+            { "Todo", ["A 'Todo' with a duplicate 'Description' exists in the system."] }
+        });
+
+        // Act
+        var response = await client.PutAsJsonAsync($"{Mother.TodosBasePath}/{todo2.Id}", request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var errors = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        errors.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
+    public async Task UpdateTodo_WhenDescriptionIsDuplicatedWithMixedCasing_ShouldReturnBadRequest()
+    {
+        // Arrange
+        using var client = _factory.CreateClient();
+
+        var todo1 = await Mother.CreateTodoAsync(client);
+        _createdTodos.Add(todo1.Id);
+        var todo2 = await Mother.CreateTodoAsync(client);
+        _createdTodos.Add(todo2.Id);
+
+        var request = Mother.GenerateUpdateTodoRequest(
+            description: todo1.Description.ToLowerInvariant(),
+            isCompleted: todo2.IsCompleted);
+
+        var expected = Mother.GenerateValidationProblemDetails(new Dictionary<string, string[]>
+        {
+            { "Todo", ["A 'Todo' with a duplicate 'Description' exists in the system."] }
+        });
+
+        // Act
+        var response = await client.PutAsJsonAsync($"{Mother.TodosBasePath}/{todo2.Id}", request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var errors = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        errors.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
     public async Task DeleteTodo_WhenTodoIsDeleted_ShouldReturnNoContent()
     {
         // Arrange
