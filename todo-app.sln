@@ -29,6 +29,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "migrations", "migrations", 
 		db\migrations\V1_0_2__Create_Todo_Stored_Procedures.sql = db\migrations\V1_0_2__Create_Todo_Stored_Procedures.sql
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dotfiles", "dotfiles", "{7BDF8C10-6755-452A-987D-4F6E4E9AD255}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.env = .env
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		docker-compose.yml = docker-compose.yml
+		global.json = global.json
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
