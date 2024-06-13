@@ -10,14 +10,14 @@ namespace TodoApp.Core;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddTodoAppCore(this IServiceCollection services)
+    public static void AddTodoApiApplication(this IServiceCollection services)
     {
         services.AddSingleton<ITodoService, TodoService>();
         services.AddSingleton<ITodoRepository, TodoRepository>();
         services.AddValidatorsFromAssemblyContaining<ITodoAppCoreMarker>(ServiceLifetime.Singleton);
     }
 
-    public static void AddTodoAppCoreDatabase(this IServiceCollection services, DatabaseOptions options)
+    public static void AddTodoApiDatabase(this IServiceCollection services, DatabaseOptions options)
     {
         services.AddSingleton<IDbConnectionFactory>(_ => new SqlServerConnectionFactory(options.ConnectionString));
     }
