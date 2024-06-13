@@ -15,19 +15,14 @@ jobs:
       contents: read
       pull-requests: write
 
+    env:
+      TODO_API_SA_PASSWORD: ${{ secrets.TODO_API_SA_PASSWORD }}
+      TODO_API_USER_NAME: ${{ secrets.TODO_API_USER_NAME }}
+      TODO_API_USER_PASSWORD: ${{ secrets.TODO_API_USER_PASSWORD }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4.1.7
-
-      - name: Set up environment variables
-        env:
-          TODO_API_SA_PASSWORD: ${{ secrets.TODO_API_SA_PASSWORD }}
-          TODO_API_USER_NAME: ${{ secrets.TODO_API_USER_NAME }}
-          TODO_API_USER_PASSWORD: ${{ secrets.TODO_API_USER_PASSWORD }}
-        run: |
-          echo "TODO_API_SA_PASSWORD is set"
-          echo "API_KEY is set"
-          echo "ANOTHER_SECRET is set"
 
       - name: Cache .NET packages
         uses: actions/cache@v4.0.2
