@@ -1,0 +1,66 @@
+name: Todo API CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    name: .NET CI
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: write
+
+    env:
+      TODO_API_SA_PASSWORD: ${{ secrets.TODO_API_SA_PASSWORD }}
+      TODO_API_USER_NAME: ${{ secrets.TODO_API_USER_NAME }}
+      TODO_API_USER_PASSWORD: ${{ secrets.TODO_API_USER_PASSWORD }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.1.7
+
+      - name: Cache .NET packages
+        uses: actions/cache@v4.0.2
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4.0.0
+        with:
+          dotnet-version: '8.x'
+
+      - name: Restore dependencies
+        run: dotnet restore todo-app.sln
+
+      - name: Build the application
+        run: dotnet build todo-app.sln --configuration Release --no-restore
+
+      - name: Test the application
+        run: dotnet test todo-app.sln --configuration Release --no-build --verbosity normal --collect "XPlat Code Coverage" --results-directory ./coverage
+
+      - name: Code Coverage Report
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: coverage/**/coverage.cobertura.xml
+          badge: true
+          fail_below_min: true
+          format: markdown
+          hide_branch_rate: false
+          hide_complexity: true
+          indicators: true
+          output: both
+          thresholds: '90 90'
+
+      - name: Add Coverage PR Comment
+        uses: marocchino/sticky-pull-request-comment@v2.9.0
+        with:
+          recreate: true
+          path: code-coverage-results.md

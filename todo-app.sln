@@ -17,6 +17,41 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "todo-app.server", "src\todo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "todo-app.tests.integration", "tests\todo-app.tests.integration\todo-app.tests.integration.csproj", "{72882B61-34C0-4D15-988A-78B7FF7B02C2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "db", "db", "{C83CA5AF-9ACC-4CB1-A25F-F87F6580E58E}"
+	ProjectSection(SolutionItems) = preProject
+		db\init.sql = db\init.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "migrations", "migrations", "{CCF0CF09-7CF7-4C95-ABB0-964F00C4236E}"
+	ProjectSection(SolutionItems) = preProject
+		db\migrations\V1_0_0__Create_Datbase_Api_User.sql = db\migrations\V1_0_0__Create_Datbase_Api_User.sql
+		db\migrations\V1_0_1__Create_Database_Tables.sql = db\migrations\V1_0_1__Create_Database_Tables.sql
+		db\migrations\V1_0_2__Create_Todo_Stored_Procedures.sql = db\migrations\V1_0_2__Create_Todo_Stored_Procedures.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dotfiles", "dotfiles", "{7BDF8C10-6755-452A-987D-4F6E4E9AD255}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.env = .env
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		docker-compose.yml = docker-compose.yml
+		global.json = global.json
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{93191A21-DC72-4853-A4B7-D0C33C4E4D52}"
+	ProjectSection(SolutionItems) = preProject
+		.github\CODEOWNERS = .github\CODEOWNERS
+		.github\dependabot.yml = .github\dependabot.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{9264E940-8850-4E67-975F-AE385F48DB13}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build-and-test-application.yml = .github\workflows\build-and-test-application.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +90,8 @@ Global
 		{966CC3A0-2DF0-457D-B11C-00B9ACFC2C60} = {279E29BE-4A47-43FC-BDBC-CE66123DD724}
 		{1858083A-86D2-4FE6-9577-1C9487EE7302} = {279E29BE-4A47-43FC-BDBC-CE66123DD724}
 		{72882B61-34C0-4D15-988A-78B7FF7B02C2} = {2AF4B34B-5CAF-4A09-B242-F57CBE98A927}
+		{CCF0CF09-7CF7-4C95-ABB0-964F00C4236E} = {C83CA5AF-9ACC-4CB1-A25F-F87F6580E58E}
+		{9264E940-8850-4E67-975F-AE385F48DB13} = {93191A21-DC72-4853-A4B7-D0C33C4E4D52}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A79B88BE-1786-4BE3-8F67-9508A0EFDC59}
