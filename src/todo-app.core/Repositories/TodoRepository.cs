@@ -123,7 +123,7 @@ public class TodoRepository(IDbConnectionFactory _dbConnectionFactory) : ITodoRe
 
     public async Task<bool> ExistsById(long id, CancellationToken token = default)
     {
-        _logger.Information("Todo Exists by {Id}", id);
+        _logger.Information("Does Todo Exist with {Id}", id);
         using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
 
         var parameters = new DynamicParameters();
@@ -131,9 +131,9 @@ public class TodoRepository(IDbConnectionFactory _dbConnectionFactory) : ITodoRe
 
         var exists = await connection.ExecuteScalarAsync<bool>(
             new CommandDefinition(
-                "SELECT COUNT(1) FROM [dbo].[Todo] WHERE [Id] = @Id;",
+                "[dbo].[usp_Todo_ExistsById]",
                 parameters,
-                commandType: CommandType.Text,
+                commandType: CommandType.StoredProcedure,
                 cancellationToken: token));
 
         return exists;
