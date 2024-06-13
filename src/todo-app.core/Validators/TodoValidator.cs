@@ -19,7 +19,7 @@ public class TodoValidator : AbstractValidator<Todo>
         RuleFor(x => x)
             .MustAsync(ValidateTodoAsync)
             .OverridePropertyName("Todo")
-            .WithMessage("'Todo' with a duplicate 'Description' already exists in the system.")
+            .WithMessage("A 'Todo' with a duplicate 'Description' exists in the system.")
             .When(x => x.Id != default);
     }
 
