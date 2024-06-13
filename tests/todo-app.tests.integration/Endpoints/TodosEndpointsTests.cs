@@ -197,6 +197,38 @@ public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoAp
         actual!.Todos.Should().BeEmpty();
     }
 
+    [Fact]
+    public async Task DeleteTodo_WhenTodoIsDeleted_ShouldReturnNoContent()
+    {
+        // Arrange
+        using var client = _factory.CreateClient();
+        var createdTodo = await Mother.CreateTodoAsync(client);
+        _createdTodos.Add(createdTodo.Id);
+
+        // Act
+        var response = await client.DeleteAsync($"{Mother.TodosBasePath}/{createdTodo.Id}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+    }
+
+    [Fact]
+    public async Task DeleteTodo_WhenTodoDoesNotExist_ShouldReturnNotFound()
+    {
+        // Arrange
+        using var client = _factory.CreateClient();
+        var badId = Mother.GeneratePositiveLong();
+        var expected = Mother.GenerateNotFoundProblemDetails();
+
+        // Act
+        var response = await client.DeleteAsync($"{Mother.TodosBasePath}/{badId}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        var errors = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        errors.Should().BeEquivalentTo(expected);
+    }
+
     public Task InitializeAsync() => Task.CompletedTask;
 
     public async Task DisposeAsync()
