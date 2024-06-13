@@ -69,11 +69,13 @@ BEGIN
 			THROW 50003, 'The Description parameter must have a value.', 1;
 		END
 
+	DECLARE @Description_Lower NVARCHAR(512) = LOWER(@Description);
+
 	SELECT t.[Id],
 		   t.[Description],
 		   t.[IsCompleted]
 	FROM [dbo].[Todo] t
-	WHERE t.[Description] = @Description;
+	WHERE t.[Description_Lower] LIKE '%' + @Description_Lower + '%';
 END
 GO
 
