@@ -2,7 +2,7 @@ version: 2
 updates:
 
   - package-ecosystem: "github-actions"
-    directory: "/"
+    directory: "/src/todo-app.client"
     schedule:
       interval: "weekly"
     commit-message:
