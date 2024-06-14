@@ -14,6 +14,10 @@ public class TodoValidator : AbstractValidator<Todo>
         _repository = repository;
 
         RuleFor(x => x.Id)
+            .GreaterThanOrEqualTo(1)
+            .When(x => x.Id != default);
+
+        RuleFor(x => x.Id)
             .MustAsync(ValidateTodoAsync)
             .OverridePropertyName("Todo")
             .WithMessage("A 'Todo' with a duplicate 'Description' exists in the system.")
