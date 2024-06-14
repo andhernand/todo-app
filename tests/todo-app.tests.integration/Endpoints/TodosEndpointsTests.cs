@@ -222,6 +222,26 @@ public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoAp
     }
 
     [Fact]
+    public async Task UpdateTodo_WhenIdIsNegative_ShouldReturnBadRequest()
+    {
+        // Arrange
+        using var client = _factory.CreateClient();
+        var request = Mother.GenerateUpdateTodoRequest();
+        var expected = Mother.GenerateValidationProblemDetails(new Dictionary<string, string[]>
+        {
+            { "Id", ["'Id' must be greater than or equal to '1'."] }
+        });
+
+        // Act
+        var response = await client.PutAsJsonAsync($"{Mother.TodosBasePath}/{-2}", request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var errors = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        errors.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
     public async Task UpdateTodo_WhenDescriptionIsInvalid_ShouldReturnBadRequest()
     {
         // Arrange
