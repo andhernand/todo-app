@@ -1,0 +1,44 @@
+﻿name: Todo API Web Client CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    name: Node.js CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.1.7
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4.0.0
+        with:
+          dotnet-version: '8.x'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4.0.2
+        with:
+          node-version: 20.x
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: src/todo-app.client
+
+      - name: Prettier Check
+        run: npm run pcheck
+        working-directory: src/todo-app.client
+
+      - name: Run Linter
+        run: npm run lint
+        working-directory: src/todo-app.client
+
+      - name: Build application
+        run: npm run build
+        working-directory: src/todo-app.client
