@@ -3,11 +3,13 @@
 const TodoList = ({ todos, dispatch }) => {
   return (
     <section className="todo-list">
-      <ul>
-        {todos.map((todo) => (
-          <TodoItem key={todo.id} todo={todo} dispatch={dispatch} />
-        ))}
-      </ul>
+      <table>
+        <tbody>
+          {todos.map((todo) => (
+            <TodoItem key={todo.id} todo={todo} dispatch={dispatch} />
+          ))}
+        </tbody>
+      </table>
     </section>
   );
 };

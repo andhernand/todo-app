@@ -21,34 +21,38 @@
   };
 
   return (
-    <li className="todo-item">
-      <span className={todo.isCompleted ? 'todo-completed' : ''}>
-        {todo.description}
-      </span>
-      <div className="buttons">
-        <button
-          className="icon-button"
-          type="button"
-          onClick={(e) => handleComplete(e)}
-        >
-          <i className="fas fa-check"></i>
-        </button>
-        <button
-          className="icon-button"
-          type="button"
-          onClick={(e) => handleEdit(e)}
-        >
-          <i className="fas fa-edit"></i>
-        </button>
-        <button
-          className="icon-button"
-          type="button"
-          onClick={(e) => handleDelete(e)}
-        >
-          <i className="fas fa-trash"></i>
-        </button>
-      </div>
-    </li>
+    <tr className="todo-item">
+      <td>
+        <span className={todo.isCompleted ? 'todo-completed' : ''}>
+          {todo.description}
+        </span>
+      </td>
+      <td>
+        <div className="buttons">
+          <button
+            className="icon-button"
+            type="button"
+            onClick={(e) => handleComplete(e)}
+          >
+            <i className="fas fa-check"></i>
+          </button>
+          <button
+            className="icon-button"
+            type="button"
+            onClick={(e) => handleEdit(e)}
+          >
+            <i className="fas fa-edit"></i>
+          </button>
+          <button
+            className="icon-button"
+            type="button"
+            onClick={(e) => handleDelete(e)}
+          >
+            <i className="fas fa-trash"></i>
+          </button>
+        </div>
+      </td>
+    </tr>
   );
 };
 
