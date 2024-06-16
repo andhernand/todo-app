@@ -1,19 +1,27 @@
-﻿const TodoItem = ({ todo }) => {
-  const { id, description, isCompleted } = todo;
-
-  const handleChange = (e) => {
+﻿const TodoItem = ({ todo, dispatch }) => {
+  const handleClick = (e) => {
     e.preventDefault();
+    dispatch({
+      type: 'UPDATE_TODO',
+      payload: { ...todo, isCompleted: !todo.isCompleted },
+    });
+  };
+
+  const handleDelete = (e) => {
+    e.preventDefault();
+    dispatch({
+      type: 'DELETE_TODO',
+      payload: todo,
+    });
   };
 
   return (
-    <li>
-      <input
-        id={`${id}-complete`}
-        type="checkbox"
-        checked={isCompleted}
-        onChange={(e) => handleChange(e)}
-      />
-      <span>{description}</span>
+    <li className="todo-item">
+      <span className={todo.isCompleted ? 'todo-completed' : ''}>
+        {todo.description}
+      </span>
+      <button onClick={(e) => handleClick(e)}>Complete</button>
+      <button onClick={(e) => handleDelete(e)}>Delete</button>
     </li>
   );
 };

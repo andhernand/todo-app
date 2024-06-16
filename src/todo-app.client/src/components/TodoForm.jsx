@@ -1,10 +1,16 @@
 ﻿import { useState } from 'react';
 
-const TodoForm = () => {
+const TodoForm = ({ dispatch }) => {
   const [task, setTask] = useState('');
+  const [counter, setCounter] = useState(1);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(`Your new task: ${task}`);
+    setCounter(counter + 1); // fake an id incrementation. remove when you add calls to the api.
+    dispatch({
+      type: 'ADD_TODO',
+      payload: { id: counter, description: task, isCompleted: false },
+    });
     clearForm();
   };
 
@@ -13,19 +19,21 @@ const TodoForm = () => {
   };
 
   return (
-    <section className="addTask">
-      <form id="addTaskForm" onSubmit={(e) => handleSubmit(e)}>
-        <input
-          id="task-input"
-          type="text"
-          value={task}
-          className="form-input"
-          placeholder="Add a task"
-          onChange={(e) => setTask(e.target.value)}
-        />
-        <button type="submit" className="button">
-          Submit
-        </button>
+    <section>
+      <form id="add-task-form" onSubmit={(e) => handleSubmit(e)}>
+        <div className="form">
+          <input
+            id="task-input"
+            type="text"
+            value={task}
+            className="form-input"
+            placeholder="Add a task"
+            onChange={(e) => setTask(e.target.value)}
+          />
+          <button type="submit" className="button">
+            Submit
+          </button>
+        </div>
       </form>
     </section>
   );

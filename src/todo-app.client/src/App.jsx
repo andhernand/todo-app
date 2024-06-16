@@ -1,20 +1,20 @@
-import './App.css';
-import Header from './components/Header';
-import Footer from './components/Footer';
+import { useReducer } from 'react';
+import todoReducer from './reducers/todoReducer.jsx';
 import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList';
-import UseGetTodos from '@/hooks/useGetTodos.jsx';
+import './App.css';
 
 function App() {
-  const { todos } = UseGetTodos([]);
+  const [state, dispatch] = useReducer(todoReducer, { todos: [] });
 
   return (
-    <div className="content">
-      <Header />
-      <TodoForm />
-      <TodoList todos={todos} />
-      <Footer />
-    </div>
+    <>
+      <header>
+        <h1>Tasks</h1>
+      </header>
+      <TodoForm dispatch={dispatch} />
+      <TodoList todos={state.todos} dispatch={dispatch} />
+    </>
   );
 }
 
