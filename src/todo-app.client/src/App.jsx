@@ -2,7 +2,6 @@ import { useReducer } from 'react';
 import todoReducer from './reducers/todoReducer.jsx';
 import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList';
-import './App.css';
 
 function App() {
   const [state, dispatch] = useReducer(todoReducer, { todos: [] });

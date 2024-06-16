@@ -30,8 +30,8 @@ const TodoForm = ({ dispatch }) => {
             placeholder="Add a task"
             onChange={(e) => setTask(e.target.value)}
           />
-          <button type="submit" className="button">
-            Submit
+          <button type="submit" className="button icon-button">
+            <i className="fas fa-plus"></i>
           </button>
         </div>
       </form>
