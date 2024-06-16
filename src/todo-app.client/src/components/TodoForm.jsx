@@ -19,7 +19,7 @@ const TodoForm = ({ dispatch }) => {
   };
 
   return (
-    <section>
+    <article>
       <form id="add-task-form" onSubmit={(e) => handleSubmit(e)}>
         <div className="form">
           <input
@@ -35,7 +35,7 @@ const TodoForm = ({ dispatch }) => {
           </button>
         </div>
       </form>
-    </section>
+    </article>
   );
 };
 
