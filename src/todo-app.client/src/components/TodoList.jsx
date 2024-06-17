@@ -2,7 +2,7 @@
 
 const TodoList = ({ todos, dispatch }) => {
   return (
-    <article className="todo-list">
+    <div className="todo-list">
       <table>
         <tbody>
           {todos.map((todo) => (
@@ -10,7 +10,7 @@ const TodoList = ({ todos, dispatch }) => {
           ))}
         </tbody>
       </table>
-    </article>
+    </div>
   );
 };
 
