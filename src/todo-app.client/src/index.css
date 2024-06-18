@@ -5,7 +5,7 @@
   --completed-color: hsl(0, 0%, 60%);
   --font-color: hsla(0, 0%, 100%, 85%);
   --background-color: hsl(0, 0%, 14%);
-  font-family: sans-serif;
+  font-family: "Cascadia Code", sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
