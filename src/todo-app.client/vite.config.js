@@ -1,8 +1,10 @@
+import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import fs from 'fs';
 import path from 'path';
 import child_process from 'child_process';
+import { env } from 'process';
 
 const customPort = 8877;
 const certificateName = 'todo-app.client';
@@ -23,9 +25,23 @@ if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
     }
 }
 
+const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
+    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'https://localhost:7016';
+
 export default defineConfig({
     plugins: [react()],
+    resolve: {
+        alias: {
+            '@': fileURLToPath(new URL('./src', import.meta.url))
+        }
+    },
     server: {
+        proxy: {
+            '^/api/todos': {
+                target,
+                secure: false
+            }
+        },
         port: customPort,
         https: {
             key: fs.readFileSync(keyFilePath),

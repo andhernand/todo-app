@@ -1,22 +1,120 @@
 :root {
-  font-family: "Inter", sans-serif;
-  font-synthesis: none;
+  --border-color: hsla(0, 0%, 65%, 50%);
+  --button-bg-color: hsl(211, 100%, 50%);
+  --button-bg-color-hover: hsl(211, 100%, 35%);
+  --completed-color: hsl(0, 0%, 60%);
+  --font-color: hsla(0, 0%, 100%, 85%);
+  --background-color: hsl(0, 0%, 14%);
+  font-family: "Cascadia Code", sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  font-variation-settings: "slnt" 0;
-
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.85);
-  background-color: #242424;
-
+  background-color: var(--background-color);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-body {
-  margin: 0;
-  min-width: 400px;
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+#root {
+  max-width: 840px;
+  min-width: 420px;
   min-height: 100vh;
+  margin: 0 auto;
+}
+
+header {
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  align-items: center;
+}
+
+.form-input {
+  flex-grow: 1;
+  margin-right: 0.5rem;
+  padding: 0.6rem;
+  border-radius: 0.3rem;
+  border: 1px solid var(--border-color);
+}
+
+.button {
+  cursor: pointer;
+  padding: 10px 20px;
+  border: 1px solid var(--button-bg-color);
+  border-radius: 5px;
+  background-color: var(--button-bg-color);
+  transition: background-color 0.3s;
+}
+
+.button:hover {
+  border: 1px solid var(--button-bg-color-hover);
+  background-color: var(--button-bg-color-hover);
+}
+
+.todo-list {
+  margin: 1rem 0;
+}
+
+.todo-list table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.todo-list table tr:nth-child(odd) {
+  background-color: hsla(211, 100%, 88%, 20%);
+}
+
+.todo-list table tr:nth-child(even) {
+  background-color: hsla(211, 100%, 80%, 10%);
+}
+
+.todo-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+}
+
+.buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.todo-description {
+  flex-grow: 1;
+}
+
+.todo-icon-button {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 1px;
+  transition: color 0.3s;
+}
+
+.todo-icon-button:hover {
+  color: var(--button-bg-color-hover);
+}
+
+.svg-icon-button {
+  flex-shrink: 0;
+  height: 16px;
+  width: 16px;
+  fill: currentColor;
+}
+
+.complete {
+  text-decoration: line-through;
+  color: var(--completed-color);
 }
