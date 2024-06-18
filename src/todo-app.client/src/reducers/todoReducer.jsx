@@ -1,11 +1,14 @@
 ﻿export const initialState = {
   todos: [],
+  editingTodo: null,
 };
 
 export const INITIALIZE_TODOS = 'INITIALIZE_TODOS';
 export const ADD_TODO = 'ADD_TODO';
 export const UPDATE_TODO = 'UPDATE_TODO';
 export const DELETE_TODO = 'DELETE_TODO';
+export const SET_EDITING_TODO = 'SET_EDITING_TODO';
+export const CLEAR_EDITING_TODO = 'CLEAR_EDITING_TODO';
 
 const todoReducer = (state = initialState, { type, payload } = {}) => {
   switch (type) {
@@ -19,11 +22,30 @@ const todoReducer = (state = initialState, { type, payload } = {}) => {
         todos: state.todos.map((todo) =>
           todo.id === payload.id ? payload : todo,
         ),
+        editingTodo: null,
       };
     case DELETE_TODO:
+      if (state.editingTicket && state.editingTicket.id === payload.id) {
+        return {
+          ...state,
+          tickets: state.tickets.filter((ticket) => ticket.id !== payload.id),
+          editingTodo: null,
+        };
+      } else {
+        return {
+          ...state,
+          todos: state.todos.filter((todo) => todo.id !== payload.id),
+        };
+      }
+    case SET_EDITING_TODO:
       return {
         ...state,
-        todos: state.todos.filter((todo) => todo.id !== payload.id),
+        editingTodo: payload,
+      };
+    case CLEAR_EDITING_TODO:
+      return {
+        ...state,
+        editingTodo: null,
       };
     default:
       return state;

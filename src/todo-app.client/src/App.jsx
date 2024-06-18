@@ -31,7 +31,7 @@ function App() {
       <header>
         <h1>Tasks</h1>
       </header>
-      <TodoForm dispatch={dispatch} />
+      <TodoForm editingTodo={state.editingTodo} dispatch={dispatch} />
       <TodoList todos={sortedTodos} dispatch={dispatch} />
     </>
   );

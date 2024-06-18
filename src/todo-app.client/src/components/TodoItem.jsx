@@ -1,4 +1,8 @@
-﻿import { UPDATE_TODO, DELETE_TODO } from '../reducers/todoReducer';
+﻿import {
+  UPDATE_TODO,
+  DELETE_TODO,
+  SET_EDITING_TODO,
+} from '../reducers/todoReducer';
 import { updateTodo, deleteTodo } from '../services/todoService';
 
 const TodoItem = ({ todo, dispatch }) => {
@@ -17,7 +21,7 @@ const TodoItem = ({ todo, dispatch }) => {
 
   const handleEdit = (e) => {
     e.preventDefault();
-    // TODO: Implement Editing.
+    dispatch({ type: SET_EDITING_TODO, payload: todo });
   };
 
   const handleDelete = (e) => {

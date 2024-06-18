@@ -104,12 +104,11 @@ header {
 }
 
 .todo-icon-button:hover {
-  color: var(--button-bg-color);
+  color: var(--button-bg-color-hover);
 }
 
 .svg-icon-button {
   flex-shrink: 0;
-  line-height: 1;
   height: 16px;
   width: 16px;
   fill: currentColor;
