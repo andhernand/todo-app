@@ -52,6 +52,7 @@ header {
   border: 1px solid var(--button-bg-color);
   border-radius: 5px;
   background-color: var(--button-bg-color);
+  transition: background-color 0.3s;
 }
 
 .button:hover {
@@ -87,24 +88,34 @@ header {
 
 .buttons {
   display: flex;
-  gap: 1px;
+  gap: 6px;
 }
 
-.todo-item span {
+.todo-description {
   flex-grow: 1;
 }
 
-.todo-item button {
+.todo-icon-button {
   cursor: pointer;
   background: none;
   border: none;
+  padding: 1px;
+  transition: color 0.3s;
 }
 
-.todo-item button:hover {
+.todo-icon-button:hover {
   color: var(--button-bg-color);
 }
 
-.todo-completed {
+.svg-icon-button {
+  flex-shrink: 0;
+  line-height: 1;
+  height: 16px;
+  width: 16px;
+  fill: currentColor;
+}
+
+.complete {
   text-decoration: line-through;
   color: var(--completed-color);
 }
