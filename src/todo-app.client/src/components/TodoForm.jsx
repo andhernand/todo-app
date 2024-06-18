@@ -1,20 +1,23 @@
-﻿import { useState, useRef } from 'react';
+﻿import { useRef } from 'react';
+import { ADD_TODO } from '../reducers/todoReducer';
+import { createTodo } from '../services/todoService';
 
 const TodoForm = ({ dispatch }) => {
   const description = useRef(null);
-  const [counter, setCounter] = useState(1);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setCounter(counter + 1); // fake an id incrementation. remove when you add calls to the api.
-    dispatch({
-      type: 'ADD_TODO',
-      payload: {
-        id: counter,
-        description: description.current.value,
-        isCompleted: false,
-      },
+
+    createTodo({
+      description: description.current.value,
+      isCompleted: false,
+    }).then((response) => {
+      dispatch({
+        type: ADD_TODO,
+        payload: response.data,
+      });
     });
+
     e.target.reset();
   };
 
@@ -30,7 +33,7 @@ const TodoForm = ({ dispatch }) => {
             placeholder="Add a task"
           />
           <button type="submit" className="button icon-button">
-            <i className="fas fa-plus"></i>
+            <i className="fa-solid fa-plus"></i>
           </button>
         </div>
       </form>
