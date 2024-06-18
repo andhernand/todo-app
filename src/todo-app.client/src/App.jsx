@@ -6,9 +6,11 @@ import todoReducer, {
 import { getAllTodos } from './services/todoService';
 import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList';
+import { sortTodos } from './utilities/sortUtilities';
 
 function App() {
   const [state, dispatch] = useReducer(todoReducer, initialState);
+  const sortedTodos = sortTodos(state.todos);
 
   useEffect(() => {
     const fetchTodos = () => {
@@ -30,7 +32,7 @@ function App() {
         <h1>Tasks</h1>
       </header>
       <TodoForm dispatch={dispatch} />
-      <TodoList todos={state.todos} dispatch={dispatch} />
+      <TodoList todos={sortedTodos} dispatch={dispatch} />
     </>
   );
 }
