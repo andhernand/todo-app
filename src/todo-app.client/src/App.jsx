@@ -14,13 +14,16 @@ function App() {
 
   useEffect(() => {
     const fetchTodos = () => {
-      getAllTodos().then((response) => {
-        const allTodos = response.data.todos;
-        dispatch({
-          type: INITIALIZE_TODOS,
-          payload: allTodos,
+      getAllTodos()
+        .then((todos) => {
+          dispatch({
+            type: INITIALIZE_TODOS,
+            payload: todos,
+          });
+        })
+        .catch((e) => {
+          alert(e.message);
         });
-      });
     };
 
     fetchTodos();
