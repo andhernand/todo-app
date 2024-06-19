@@ -1,4 +1,4 @@
-﻿import { useRef, useEffect } from 'react';
+﻿import { useEffect, useState } from 'react';
 import {
   ADD_TODO,
   UPDATE_TODO,
@@ -7,13 +7,14 @@ import {
 import { createTodo, updateTodo } from '../services/todoService';
 
 const TodoForm = ({ dispatch, editingTodo }) => {
-  const description = useRef(null);
+  const [task, setTask] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     if (editingTodo) {
-      description.current.value = editingTodo.description;
+      setTask(editingTodo.description);
     } else {
-      description.current.value = '';
+      clearForm();
     }
   }, [editingTodo]);
 
@@ -22,17 +23,18 @@ const TodoForm = ({ dispatch, editingTodo }) => {
 
     if (editingTodo) {
       updateTodo(editingTodo.id, {
-        description: description.current.value,
+        description: task,
         isCompleted: editingTodo.isCompleted,
       }).then((response) => {
         dispatch({
           type: UPDATE_TODO,
           payload: response.data,
         });
+        clearForm();
       });
     } else {
       createTodo({
-        description: description.current.value,
+        description: task,
         isCompleted: false,
       })
         .then((todo) => {
@@ -40,32 +42,39 @@ const TodoForm = ({ dispatch, editingTodo }) => {
             type: ADD_TODO,
             payload: todo,
           });
+          clearForm();
         })
         .catch((e) => {
-          const errors = parseErrors(e.response.data.errors);
-          const errorMessage = `${e.response.data.title}\n${errors}`;
-          alert(errorMessage);
+          const errors = parseError(e.response.data.errors);
+          setErrorMessage(errors);
         });
     }
-
-    e.target.reset();
   };
 
-  const parseErrors = (errors) => {
+  const handleCancel = (e) => {
+    e.preventDefault();
+    dispatch({ type: CLEAR_EDITING_TODO });
+    clearForm();
+  };
+
+  const clearForm = () => {
+    setTask('');
+    setErrorMessage('');
+  };
+
+  const parseError = (errors) => {
     let result = '';
+
     for (const key in errors) {
       if (Object.prototype.hasOwnProperty.call(errors, key)) {
         const messages = errors[key];
         messages.forEach((message) => {
-          result += `${key}: ${message}\n`;
+          result += `${message}\n`;
         });
       }
     }
-    return result.trim(); // Remove the trailing newline character
-  };
 
-  const handleCancel = () => {
-    dispatch({ type: CLEAR_EDITING_TODO });
+    return result.trim();
   };
 
   return (
@@ -74,9 +83,10 @@ const TodoForm = ({ dispatch, editingTodo }) => {
         <input
           id="task-input"
           type="text"
-          ref={description}
           className="form-input"
           placeholder="Add a task"
+          value={task}
+          onChange={(e) => setTask(e.target.value)}
         />
         <div className="buttons">
           <button type="submit" className="button">
@@ -99,6 +109,14 @@ const TodoForm = ({ dispatch, editingTodo }) => {
           )}
         </div>
       </div>
+      {errorMessage && (
+        <div className="alert">
+          <span className="close-btn" onClick={() => clearForm()}>
+            &times;
+          </span>
+          {errorMessage}
+        </div>
+      )}
     </form>
   );
 };
