@@ -34,15 +34,34 @@ const TodoForm = ({ dispatch, editingTodo }) => {
       createTodo({
         description: description.current.value,
         isCompleted: false,
-      }).then((response) => {
-        dispatch({
-          type: ADD_TODO,
-          payload: response.data,
+      })
+        .then((todo) => {
+          dispatch({
+            type: ADD_TODO,
+            payload: todo,
+          });
+        })
+        .catch((e) => {
+          const errors = parseErrors(e.response.data.errors);
+          const errorMessage = `${e.response.data.title}\n${errors}`;
+          alert(errorMessage);
         });
-      });
     }
 
     e.target.reset();
+  };
+
+  const parseErrors = (errors) => {
+    let result = '';
+    for (const key in errors) {
+      if (Object.prototype.hasOwnProperty.call(errors, key)) {
+        const messages = errors[key];
+        messages.forEach((message) => {
+          result += `${key}: ${message}\n`;
+        });
+      }
+    }
+    return result.trim(); // Remove the trailing newline character
   };
 
   const handleCancel = () => {
