@@ -47,7 +47,6 @@ const TodoForm = ({ dispatch, editingTodo }) => {
 
   const handleCancel = () => {
     dispatch({ type: CLEAR_EDITING_TODO });
-    description.currency.value = '';
   };
 
   return (
