@@ -15,14 +15,17 @@ function App() {
   useEffect(() => {
     const fetchTodos = () => {
       getAllTodos()
-        .then((todos) => {
-          dispatch({
-            type: INITIALIZE_TODOS,
-            payload: todos,
-          });
+        .then((response) => {
+          if (response.status === 200) {
+            dispatch({
+              type: INITIALIZE_TODOS,
+              payload: response.data.todos,
+            });
+          }
         })
         .catch((e) => {
-          alert(e.message);
+          const response = e.response;
+          console.error(response.statusText);
         });
     };
 
