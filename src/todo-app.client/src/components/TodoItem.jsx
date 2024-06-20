@@ -1,22 +1,32 @@
 ﻿import {
-  UPDATE_TODO,
   DELETE_TODO,
   SET_EDITING_TODO,
+  UPDATE_TODO,
 } from '../reducers/todoReducer';
-import { updateTodo, deleteTodo } from '../services/todoService';
+import { deleteTodo, updateTodo } from '../services/todoService';
+import { parseValidationError } from '../utilities/parseValidationErrors';
 
 const TodoItem = ({ todo, dispatch }) => {
   const handleIsCompleted = (e) => {
     e.preventDefault();
-
-    updateTodo(todo.id, { ...todo, isCompleted: !todo.isCompleted }).then(
-      (response) => {
-        dispatch({
-          type: UPDATE_TODO,
-          payload: response.data,
-        });
-      },
-    );
+    updateTodo(todo.id, { ...todo, isCompleted: !todo.isCompleted })
+      .then((response) => {
+        if (response.status === 200) {
+          dispatch({
+            type: UPDATE_TODO,
+            payload: response.data,
+          });
+        }
+      })
+      .catch((e) => {
+        const response = e.response;
+        if (response.status === 404 && response.data) {
+          setErrors(response.data.errors);
+        }
+        if (response.status === 400 && response.data) {
+          setErrors(response.data.errors);
+        }
+      });
   };
 
   const handleEdit = (e) => {
@@ -26,13 +36,26 @@ const TodoItem = ({ todo, dispatch }) => {
 
   const handleDelete = (e) => {
     e.preventDefault();
-
-    deleteTodo(todo.id).then(() => {
-      dispatch({
-        type: DELETE_TODO,
-        payload: todo,
+    deleteTodo(todo.id)
+      .then((response) => {
+        if (response.status === 204) {
+          dispatch({
+            type: DELETE_TODO,
+            payload: todo,
+          });
+        }
+      })
+      .catch((e) => {
+        const response = e.response;
+        if (response.status === 404) {
+          setErrors(response.data.errors);
+        }
       });
-    });
+  };
+
+  const setErrors = (errors) => {
+    const error = parseValidationError(errors);
+    console.error(error);
   };
 
   return (

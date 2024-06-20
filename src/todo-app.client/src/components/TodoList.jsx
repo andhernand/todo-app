@@ -1,4 +1,4 @@
-﻿import TodoItem from '@/components/TodoItem.jsx';
+﻿import TodoItem from './TodoItem';
 
 const TodoList = ({ todos, dispatch }) => {
   return (

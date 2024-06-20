@@ -1,19 +1,21 @@
-﻿import { useRef, useEffect } from 'react';
+﻿import { useEffect, useState } from 'react';
 import {
   ADD_TODO,
   UPDATE_TODO,
   CLEAR_EDITING_TODO,
 } from '../reducers/todoReducer';
 import { createTodo, updateTodo } from '../services/todoService';
+import { parseValidationError } from '../utilities/parseValidationErrors';
 
 const TodoForm = ({ dispatch, editingTodo }) => {
-  const description = useRef(null);
+  const [task, setTask] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     if (editingTodo) {
-      description.current.value = editingTodo.description;
+      setTask(editingTodo.description);
     } else {
-      description.current.value = '';
+      clearForm();
     }
   }, [editingTodo]);
 
@@ -21,33 +23,75 @@ const TodoForm = ({ dispatch, editingTodo }) => {
     e.preventDefault();
 
     if (editingTodo) {
-      updateTodo(editingTodo.id, {
-        description: description.current.value,
+      const todo = {
+        description: task,
         isCompleted: editingTodo.isCompleted,
-      }).then((response) => {
-        dispatch({
-          type: UPDATE_TODO,
-          payload: response.data,
-        });
-      });
-    } else {
-      createTodo({
-        description: description.current.value,
-        isCompleted: false,
-      }).then((response) => {
-        dispatch({
-          type: ADD_TODO,
-          payload: response.data,
-        });
-      });
-    }
+      };
 
-    e.target.reset();
+      updateTodo(editingTodo.id, todo)
+        .then((response) => {
+          if (response.status === 200) {
+            dispatch({
+              type: UPDATE_TODO,
+              payload: response.data,
+            });
+            clearForm();
+          }
+        })
+        .catch((error) => {
+          const response = error.response;
+          if (response.status === 404 && response.data) {
+            setErrors(response.data.errors);
+          }
+          if (response.status === 400 && response.data) {
+            setErrors(response.data.errors);
+          }
+        });
+    } else {
+      const todo = { description: task, isCompleted: false };
+
+      createTodo(todo)
+        .then((response) => {
+          if (response.status === 201) {
+            const created = response.data;
+            dispatch({
+              type: ADD_TODO,
+              payload: created,
+            });
+            clearForm();
+          }
+        })
+        .catch((e) => {
+          const response = e.response;
+          if (response.status === 400 && response.data) {
+            setErrors(response.data.errors);
+          }
+        });
+    }
   };
 
-  const handleCancel = () => {
+  const handleCancel = (e) => {
+    e.preventDefault();
     dispatch({ type: CLEAR_EDITING_TODO });
-    description.currency.value = '';
+    clearForm();
+  };
+
+  const clearForm = () => {
+    setTask('');
+    setErrorMessage('');
+  };
+
+  const handleCloseAlert = (e) => {
+    e.preventDefault();
+    setErrorMessage('');
+    if (!editingTodo) {
+      setTask('');
+    }
+  };
+
+  const setErrors = (errors) => {
+    const error = parseValidationError(errors);
+    setErrorMessage(error);
   };
 
   return (
@@ -56,9 +100,10 @@ const TodoForm = ({ dispatch, editingTodo }) => {
         <input
           id="task-input"
           type="text"
-          ref={description}
           className="form-input"
           placeholder="Add a task"
+          value={task}
+          onChange={(e) => setTask(e.target.value)}
         />
         <div className="buttons">
           <button type="submit" className="button">
@@ -81,6 +126,14 @@ const TodoForm = ({ dispatch, editingTodo }) => {
           )}
         </div>
       </div>
+      {errorMessage && (
+        <div className="alert">
+          <span className="close-btn" onClick={(e) => handleCloseAlert(e)}>
+            &times;
+          </span>
+          {errorMessage}
+        </div>
+      )}
     </form>
   );
 };

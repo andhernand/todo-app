@@ -14,13 +14,19 @@ function App() {
 
   useEffect(() => {
     const fetchTodos = () => {
-      getAllTodos().then((response) => {
-        const allTodos = response.data.todos;
-        dispatch({
-          type: INITIALIZE_TODOS,
-          payload: allTodos,
+      getAllTodos()
+        .then((response) => {
+          if (response.status === 200) {
+            dispatch({
+              type: INITIALIZE_TODOS,
+              payload: response.data.todos,
+            });
+          }
+        })
+        .catch((e) => {
+          const response = e.response;
+          console.error(response.statusText);
         });
-      });
     };
 
     fetchTodos();
