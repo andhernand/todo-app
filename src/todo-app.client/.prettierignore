@@ -35,4 +35,3 @@ nuget.config
 package-lock.json
 package.json
 todo-app.client.esproj
-vite.config.js

@@ -31,12 +31,16 @@ jobs:
         run: npm ci
         working-directory: src/todo-app.client
 
+      - name: Run Linter
+        run: npm run lint
+        working-directory: src/todo-app.client
+
       - name: Prettier Check
         run: npm run pcheck
         working-directory: src/todo-app.client
 
-      - name: Run Linter
-        run: npm run lint
+      - name: Vitest Run
+        run: npm run tests
         working-directory: src/todo-app.client
 
       - name: Build application
