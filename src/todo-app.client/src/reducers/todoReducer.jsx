@@ -25,10 +25,10 @@ const todoReducer = (state = initialState, { type, payload } = {}) => {
         editingTodo: null,
       };
     case DELETE_TODO:
-      if (state.editingTicket && state.editingTicket.id === payload.id) {
+      if (state.editingTodo && state.editingTodo.id === payload.id) {
         return {
           ...state,
-          tickets: state.tickets.filter((ticket) => ticket.id !== payload.id),
+          todos: state.todos.filter((todo) => todo.id !== payload.id),
           editingTodo: null,
         };
       } else {
