@@ -22,7 +22,7 @@ public class TodoApiFactory : WebApplicationFactory<ITodoAppMarker>, IAsyncLifet
 
     private readonly MsSqlContainer _sqlContainer = new MsSqlBuilder()
         .WithPassword(SaPassword)
-        .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
+        .WithImage("mcr.microsoft.com/mssql/server:2022-CU13-ubuntu-22.04")
         .WithEnvironment("ACCEPT_EULA", "Y")
         .WithEnvironment("MSSQL_PID", "Developer")
         .Build();
