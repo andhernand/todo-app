@@ -3,7 +3,7 @@ name: todoapidb
 services:
   sqlserver:
     container_name: sqlserver
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    image: mcr.microsoft.com/mssql/server:2022-CU13-ubuntu-22.04
     environment:
       SA_PASSWORD: ${TODO_API_SA_PASSWORD}
       ACCEPT_EULA: Y
@@ -20,7 +20,7 @@ services:
 
   init-db:
     container_name: init-db
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    image: mcr.microsoft.com/mssql/server:2022-CU13-ubuntu-22.04
     volumes:
       - ./db/init.sql:/init.sql:ro
     depends_on:
@@ -35,7 +35,7 @@ services:
 
   flyway:
     container_name: flyway
-    image: redgate/flyway:latest
+    image: redgate/flyway:10.17.0
     depends_on:
       init-db:
         condition: service_completed_successfully
