@@ -35,7 +35,7 @@ services:
 
   flyway:
     container_name: flyway
-    image: redgate/flyway:10.17.0
+    image: redgate/flyway:10.17.2
     depends_on:
       init-db:
         condition: service_completed_successfully

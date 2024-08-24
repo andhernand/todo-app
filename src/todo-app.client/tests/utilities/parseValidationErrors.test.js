@@ -1,6 +1,4 @@
-﻿/* eslint-disable @stylistic/js/quotes */
-
-import { describe, expect, it } from 'vitest';
+﻿import { describe, expect, it } from 'vitest';
 import { parseValidationError } from '../../src/utilities/parseValidationErrors';
 
 describe('parse validation error', () => {
