@@ -12,13 +12,14 @@ public static class ServiceCollectionExtensions
 {
     public static void AddTodoApiApplication(this IServiceCollection services)
     {
-        services.AddSingleton<ITodoService, TodoService>();
         services.AddSingleton<ITodoRepository, TodoRepository>();
+        services.AddTransient<ITodoService, TodoService>();
+
         services.AddValidatorsFromAssemblyContaining<ITodoAppCoreMarker>(ServiceLifetime.Singleton);
     }
 
-    public static void AddTodoApiDatabase(this IServiceCollection services, DatabaseOptions options)
+    public static void AddTodoApiDatabase(this IServiceCollection services, DatabaseOptions dbOptions)
     {
-        services.AddSingleton<IDbConnectionFactory>(_ => new SqlServerConnectionFactory(options.ConnectionString));
+        services.AddSingleton<IDbConnectionFactory>(_ => new SqlServerConnectionFactory(dbOptions.ConnectionString));
     }
 }
