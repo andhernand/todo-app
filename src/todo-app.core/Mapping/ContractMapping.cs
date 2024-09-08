@@ -2,7 +2,7 @@
 using TodoApp.Contracts.Responses;
 using TodoApp.Core.Models;
 
-namespace TodoApp.Server.Mapping;
+namespace TodoApp.Core.Mapping;
 
 public static class ContractMapping
 {

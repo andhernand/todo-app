@@ -42,9 +42,8 @@ try
         }
 
         app.UseHttpsRedirection();
-        app.UseHealthChecks(new PathString("/_health"));
-
         app.UseSerilogRequestLogging();
+        app.UseHealthChecks(new PathString("/_health"));
         app.UseMiddleware<ValidationMappingMiddleware>();
         app.MapApiEndpoints();
     }

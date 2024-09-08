@@ -15,7 +15,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ITodoRepository, TodoRepository>();
         services.AddTransient<ITodoService, TodoService>();
 
-        services.AddValidatorsFromAssemblyContaining<ITodoAppCoreMarker>(ServiceLifetime.Singleton);
+        services.AddValidatorsFromAssemblyContaining<ITodoAppCoreMarker>(ServiceLifetime.Transient);
     }
 
     public static void AddTodoApiDatabase(this IServiceCollection services, DatabaseOptions dbOptions)
