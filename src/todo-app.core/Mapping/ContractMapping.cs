@@ -11,9 +11,9 @@ public static class ContractMapping
         return new TodoResponse { Id = todo.Id, Description = todo.Description, IsCompleted = todo.IsCompleted };
     }
 
-    public static TodosResponse MapToResponse(this IEnumerable<Todo> todos)
+    public static IEnumerable<TodoResponse> MapToResponse(this IEnumerable<Todo> todos)
     {
-        return new TodosResponse { Todos = todos.Select(MapToResponse) };
+        return todos.Select(MapToResponse);
     }
 
     public static Todo MapToTodo(this CreateTodoRequest request)

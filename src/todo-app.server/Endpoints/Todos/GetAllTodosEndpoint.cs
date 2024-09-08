@@ -1,5 +1,6 @@
-﻿using TodoApp.Contracts.Responses;
-using TodoApp.Core.Mapping;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+
+using TodoApp.Contracts.Responses;
 using TodoApp.Core.Services;
 
 namespace TodoApp.Server.Endpoints.Todos;
@@ -10,16 +11,16 @@ public static class GetAllTodosEndpoint
 
     public static void MapGetAllTodosEndpoint(this IEndpointRouteBuilder builder)
     {
-        builder.MapGet(ApiEndpoints.Todos.GetAll, async (
-                ITodoService service,
-                CancellationToken token = default) =>
-            {
-                var todos = await service.GetAllAsync(token);
-                var response = todos.MapToResponse();
-                return TypedResults.Ok(response);
-            })
+        builder.MapGet(ApiEndpoints.Todos.GetAll,
+                async Task<Ok<IEnumerable<TodoResponse>>> (
+                    ITodoService service,
+                    CancellationToken token = default) =>
+                {
+                    var todos = await service.GetAllAsync(token);
+                    return TypedResults.Ok(todos);
+                })
             .WithName(Name)
             .WithTags(ApiEndpoints.Todos.Tag)
-            .Produces<TodosResponse>(contentType: "application/json");
+            .WithOpenApi();
     }
 }
