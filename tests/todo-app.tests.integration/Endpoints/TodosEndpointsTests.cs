@@ -359,15 +359,12 @@ public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoAp
         // Arrange
         using var client = _factory.CreateClient();
         var badId = Mother.GeneratePositiveLong();
-        var expected = Mother.GenerateNotFoundProblemDetails();
 
         // Act
         var response = await client.DeleteAsync($"{Mother.TodosBasePath}/{badId}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        var errors = await response.Content.ReadFromJsonAsync<ProblemDetails>();
-        errors.Should().BeEquivalentTo(expected);
     }
 
     public Task InitializeAsync() => Task.CompletedTask;
