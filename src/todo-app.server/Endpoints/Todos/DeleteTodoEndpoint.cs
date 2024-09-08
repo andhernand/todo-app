@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
 
 using TodoApp.Core.Services;
 
@@ -10,17 +10,20 @@ public static class DeleteTodoEndpoint
 
     public static void MapDeleteTodoEndpoint(this IEndpointRouteBuilder builder)
     {
-        builder.MapDelete(ApiEndpoints.Todos.Delete, async (
-                long id,
-                ITodoService service,
-                CancellationToken token = default) =>
-            {
-                var deleted = await service.DeleteAsync(id, token);
-                return deleted ? Results.NoContent() : Results.Problem(statusCode: StatusCodes.Status404NotFound);
-            })
+        builder.MapDelete(ApiEndpoints.Todos.Delete,
+                async Task<Results<NoContent, NotFound>> (
+                    long id,
+                    ITodoService service,
+                    CancellationToken token = default) =>
+                {
+                    var deleted = await service.DeleteAsync(id, token);
+
+                    return deleted
+                        ? TypedResults.NoContent()
+                        : TypedResults.NotFound();
+                })
             .WithName(Name)
             .WithTags(ApiEndpoints.Todos.Tag)
-            .Produces(StatusCodes.Status204NoContent)
-            .Produces<ProblemDetails>(StatusCodes.Status404NotFound, contentType: "application/problem+json");
+            .WithOpenApi();
     }
 }
