@@ -11,7 +11,7 @@ public class TodoRepository(IDbConnectionFactory _dbConnectionFactory) : ITodoRe
 {
     private readonly Serilog.ILogger _logger = Serilog.Log.ForContext<TodoRepository>();
 
-    public async Task<long?> CreateAsync(Todo todo, CancellationToken token = default)
+    public async Task<Todo> CreateAsync(Todo todo, CancellationToken token = default)
     {
         _logger.Information("Creating new {@Todo}", todo);
         using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
@@ -28,7 +28,7 @@ public class TodoRepository(IDbConnectionFactory _dbConnectionFactory) : ITodoRe
             cancellationToken: token));
 
         var id = parameters.Get<long>("@TodoId");
-        return id;
+        return todo with { Id = id };
     }
 
     public async Task<Todo?> GetByIdAsync(long id, CancellationToken token = default)

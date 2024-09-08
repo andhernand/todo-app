@@ -1,49 +1,56 @@
 ﻿using FluentValidation;
 
+using TodoApp.Contracts.Requests;
+using TodoApp.Contracts.Responses;
+using TodoApp.Core.Mapping;
 using TodoApp.Core.Models;
 using TodoApp.Core.Repositories;
 
 namespace TodoApp.Core.Services;
 
-public class TodoService(ITodoRepository _repository, IValidator<Todo> _validator) : ITodoService
+public class TodoService(ITodoRepository repository, IValidator<Todo> validator) : ITodoService
 {
-    public async Task<long?> CreateAsync(Todo todo, CancellationToken token = default)
+    public async Task<TodoResponse> CreateAsync(CreateTodoRequest request, CancellationToken token = default)
     {
-        await _validator.ValidateAndThrowAsync(todo, token);
-        return await _repository.CreateAsync(todo, token);
+        var todoRequest = request.MapToTodo();
+
+        await validator.ValidateAndThrowAsync(todoRequest, token);
+
+        var todo = await repository.CreateAsync(todoRequest, token);
+        return todo.MapToResponse();
     }
 
     public Task<Todo?> GetByIdAsync(long id, CancellationToken token = default)
     {
-        return _repository.GetByIdAsync(id, token);
+        return repository.GetByIdAsync(id, token);
     }
 
     public Task<IEnumerable<Todo>> GetAllAsync(CancellationToken token = default)
     {
-        return _repository.GetAllAsync(token);
+        return repository.GetAllAsync(token);
     }
 
     public async Task<Todo?> UpdateAsync(Todo todo, CancellationToken token = default)
     {
-        await _validator.ValidateAndThrowAsync(todo, token);
-        var exists = await _repository.ExistsById(todo.Id, token);
+        await validator.ValidateAndThrowAsync(todo, token);
+        var exists = await repository.ExistsById(todo.Id, token);
         if (!exists)
         {
             return null;
         }
 
-        _ = await _repository.UpdateAsync(todo, token);
+        _ = await repository.UpdateAsync(todo, token);
         return todo;
     }
 
     public async Task<bool> DeleteAsync(long id, CancellationToken token = default)
     {
-        var exists = await _repository.ExistsById(id, token);
+        var exists = await repository.ExistsById(id, token);
         if (!exists)
         {
             return false;
         }
 
-        return await _repository.DeleteAsync(id, token);
+        return await repository.DeleteAsync(id, token);
     }
 }

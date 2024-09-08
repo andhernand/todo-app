@@ -31,7 +31,6 @@
     <ProjectReference Include="..\todo-app.client\todo-app.client.esproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\todo-app.contracts\todo-app.contracts.csproj" />
     <ProjectReference Include="..\todo-app.core\todo-app.core.csproj" />
   </ItemGroup>
 

@@ -2,8 +2,8 @@
 
 using TodoApp.Contracts.Requests;
 using TodoApp.Contracts.Responses;
+using TodoApp.Core.Mapping;
 using TodoApp.Core.Services;
-using TodoApp.Server.Mapping;
 
 namespace TodoApp.Server.Endpoints.Todos;
 

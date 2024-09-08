@@ -4,7 +4,7 @@ namespace TodoApp.Core.Repositories;
 
 public interface ITodoRepository
 {
-    Task<long?> CreateAsync(Todo todo, CancellationToken token = default);
+    Task<Todo> CreateAsync(Todo todo, CancellationToken token = default);
     Task<Todo?> GetByIdAsync(long id, CancellationToken token = default);
     Task<Todo?> GetByDescriptionAsync(string description, CancellationToken token = default);
     Task<IEnumerable<Todo>> GetAllAsync(CancellationToken token = default);
