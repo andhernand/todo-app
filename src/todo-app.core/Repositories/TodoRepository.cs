@@ -7,14 +7,14 @@ using TodoApp.Core.Models;
 
 namespace TodoApp.Core.Repositories;
 
-public class TodoRepository(IDbConnectionFactory _dbConnectionFactory) : ITodoRepository
+public class TodoRepository(IDbConnectionFactory dbConnectionFactory) : ITodoRepository
 {
     private readonly Serilog.ILogger _logger = Serilog.Log.ForContext<TodoRepository>();
 
     public async Task<Todo> CreateAsync(Todo todo, CancellationToken token = default)
     {
         _logger.Information("Creating new {@Todo}", todo);
-        using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+        using var connection = await dbConnectionFactory.CreateConnectionAsync(token);
 
         var parameters = new DynamicParameters();
         parameters.Add("@Description", todo.Description, DbType.String, ParameterDirection.Input, 512);
@@ -34,7 +34,7 @@ public class TodoRepository(IDbConnectionFactory _dbConnectionFactory) : ITodoRe
     public async Task<Todo?> GetByIdAsync(long id, CancellationToken token = default)
     {
         _logger.Information("Get Todo By {Id}", id);
-        using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+        using var connection = await dbConnectionFactory.CreateConnectionAsync(token);
 
         var parameters = new DynamicParameters();
         parameters.Add("@Id", id, DbType.Int64, ParameterDirection.Input);
@@ -52,7 +52,7 @@ public class TodoRepository(IDbConnectionFactory _dbConnectionFactory) : ITodoRe
     public async Task<Todo?> GetByDescriptionAsync(string description, CancellationToken token = default)
     {
         _logger.Information("Get Todo By {Description}", description);
-        using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+        using var connection = await dbConnectionFactory.CreateConnectionAsync(token);
 
         var parameters = new DynamicParameters();
         parameters.Add("@Description", description, DbType.String, ParameterDirection.Input, 512);
@@ -70,7 +70,7 @@ public class TodoRepository(IDbConnectionFactory _dbConnectionFactory) : ITodoRe
     public async Task<IEnumerable<Todo>> GetAllAsync(CancellationToken token = default)
     {
         _logger.Information("Get All Todos");
-        using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+        using var connection = await dbConnectionFactory.CreateConnectionAsync(token);
 
         var todo = await connection.QueryAsync<Todo>(
             new CommandDefinition(
@@ -84,7 +84,7 @@ public class TodoRepository(IDbConnectionFactory _dbConnectionFactory) : ITodoRe
     public async Task<bool> UpdateAsync(Todo todo, CancellationToken token = default)
     {
         _logger.Information("Updating {@Todo}", todo);
-        using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+        using var connection = await dbConnectionFactory.CreateConnectionAsync(token);
 
         var parameters = new DynamicParameters();
         parameters.Add("@Id", todo.Id, DbType.Int64, ParameterDirection.Input);
@@ -105,7 +105,7 @@ public class TodoRepository(IDbConnectionFactory _dbConnectionFactory) : ITodoRe
     public async Task<bool> DeleteAsync(long id, CancellationToken token = default)
     {
         _logger.Information("Delete Todo By {Id}", id);
-        using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+        using var connection = await dbConnectionFactory.CreateConnectionAsync(token);
 
         var parameters = new DynamicParameters();
         parameters.Add("@Id", id, DbType.Int64, ParameterDirection.Input);
@@ -124,7 +124,7 @@ public class TodoRepository(IDbConnectionFactory _dbConnectionFactory) : ITodoRe
     public async Task<bool> ExistsById(long id, CancellationToken token = default)
     {
         _logger.Information("Does Todo Exist with {Id}", id);
-        using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+        using var connection = await dbConnectionFactory.CreateConnectionAsync(token);
 
         var parameters = new DynamicParameters();
         parameters.Add("@Id", id, DbType.Int64, ParameterDirection.Input);

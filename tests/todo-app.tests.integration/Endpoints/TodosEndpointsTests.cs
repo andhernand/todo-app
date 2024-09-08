@@ -8,7 +8,7 @@ using TodoApp.Contracts.Responses;
 
 namespace Todo.App.Tests.Integration.Endpoints;
 
-public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoApiFactory>, IAsyncLifetime
+public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApiFactory>, IAsyncLifetime
 {
     private readonly List<long> _createdTodos = [];
 
@@ -16,7 +16,7 @@ public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoAp
     public async Task HealthCheck_WhenHealthy_ReturnsHealthy()
     {
         // Arrange
-        using var client = _factory.CreateClient();
+        using var client = factory.CreateClient();
 
         // Act
         var response = await client.GetAsync("/_health");
@@ -32,7 +32,7 @@ public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoAp
     public async Task CreateTodo_WhenDataIsCorrect_ShouldCreateTodo()
     {
         // Arrange
-        using var client = _factory.CreateClient();
+        using var client = factory.CreateClient();
         var request = Mother.GenerateCreateTodoRequest();
         var expected = new TodoResponse
         {
@@ -60,7 +60,7 @@ public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoAp
     public async Task CreateTodo_WhenDescriptionIsInvalid_ShouldReturnBadRequest()
     {
         // Arrange
-        using var client = _factory.CreateClient();
+        using var client = factory.CreateClient();
         var request = Mother.GenerateCreateTodoRequest(description: "");
         var expected = Mother.GenerateValidationProblemDetails(new Dictionary<string, string[]>
         {
@@ -80,7 +80,7 @@ public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoAp
     public async Task CreateTodo_WhenTodoWithDescriptionAlreadyExists_ShouldReturnBadRequest()
     {
         // Arrange
-        using var client = _factory.CreateClient();
+        using var client = factory.CreateClient();
 
         var todo = await Mother.CreateTodoAsync(client);
         _createdTodos.Add(todo.Id);
@@ -104,7 +104,7 @@ public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoAp
     public async Task CreateTodo_WhenTodoWithDescriptionWithMixedCaseAlreadyExists_ShouldReturnBadRequest()
     {
         // Arrange
-        using var client = _factory.CreateClient();
+        using var client = factory.CreateClient();
 
         var todo = await Mother.CreateTodoAsync(client, description: "THIS iS Mixed CasE.");
         _createdTodos.Add(todo.Id);
@@ -129,7 +129,7 @@ public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoAp
     public async Task GetTodoById_WhenTodoExists_ShouldReturnTodo()
     {
         // Arrange
-        using var client = _factory.CreateClient();
+        using var client = factory.CreateClient();
         var expected = await Mother.CreateTodoAsync(client);
         _createdTodos.Add(expected.Id);
 
@@ -146,7 +146,7 @@ public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoAp
     public async Task GetTodoById_WhenTodoDoesNotExist_ShouldReturnNotFound()
     {
         // Arrange
-        using var client = _factory.CreateClient();
+        using var client = factory.CreateClient();
         var badId = Mother.GeneratePositiveLong();
         var expected = Mother.GenerateNotFoundProblemDetails();
 
@@ -163,22 +163,23 @@ public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoAp
     public async Task GetAllTodos_WhenTodosExist_ShouldReturnTodos()
     {
         // Arrange
-        using var client = _factory.CreateClient();
+        using var client = factory.CreateClient();
+
         var todo1 = await Mother.CreateTodoAsync(client);
-        _createdTodos.Add(todo1.Id);
         var todo2 = await Mother.CreateTodoAsync(client);
-        _createdTodos.Add(todo2.Id);
         var todo3 = await Mother.CreateTodoAsync(client);
+        _createdTodos.Add(todo1.Id);
+        _createdTodos.Add(todo2.Id);
         _createdTodos.Add(todo3.Id);
 
-        var expected = new TodosResponse { Todos = new[] { todo1, todo2, todo3 } };
+        var expected = new[] { todo1, todo2, todo3 };
 
         // Act
         var response = await client.GetAsync(Mother.TodosBasePath);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var actual = await response.Content.ReadFromJsonAsync<TodosResponse>();
+        var actual = await response.Content.ReadFromJsonAsync<IEnumerable<TodoResponse>>();
         actual.Should().BeEquivalentTo(expected);
     }
 
@@ -186,22 +187,22 @@ public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoAp
     public async Task GetAllTodos_WhenTodosDoNotExist_ShouldReturnNoTodos()
     {
         // Arrange
-        using var client = _factory.CreateClient();
+        using var client = factory.CreateClient();
 
         // Act
         var response = await client.GetAsync(Mother.TodosBasePath);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var actual = await response.Content.ReadFromJsonAsync<TodosResponse>();
-        actual!.Todos.Should().BeEmpty();
+        var actual = await response.Content.ReadFromJsonAsync<IEnumerable<TodoResponse>>();
+        actual.Should().BeEmpty();
     }
 
     [Fact]
     public async Task UpdateTodo_WhenDataIsCorrect_ShouldUpdateTodo()
     {
         // Arrange
-        using var client = _factory.CreateClient();
+        using var client = factory.CreateClient();
 
         var todo = await Mother.CreateTodoAsync(client);
         _createdTodos.Add(todo.Id);
@@ -225,7 +226,7 @@ public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoAp
     public async Task UpdateTodo_WhenIdIsNegative_ShouldReturnBadRequest()
     {
         // Arrange
-        using var client = _factory.CreateClient();
+        using var client = factory.CreateClient();
         var request = Mother.GenerateUpdateTodoRequest();
         var expected = Mother.GenerateValidationProblemDetails(new Dictionary<string, string[]>
         {
@@ -245,7 +246,7 @@ public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoAp
     public async Task UpdateTodo_WhenDescriptionIsInvalid_ShouldReturnBadRequest()
     {
         // Arrange
-        using var client = _factory.CreateClient();
+        using var client = factory.CreateClient();
 
         var todo = await Mother.CreateTodoAsync(client);
         _createdTodos.Add(todo.Id);
@@ -269,7 +270,7 @@ public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoAp
     public async Task UpdateTodo_WhenTodoDoesNotExist_ShouldReturnNotFound()
     {
         // Arrange
-        using var client = _factory.CreateClient();
+        using var client = factory.CreateClient();
         var request = Mother.GenerateUpdateTodoRequest();
         var badId = Mother.GeneratePositiveLong();
         var expected = Mother.GenerateNotFoundProblemDetails();
@@ -287,7 +288,7 @@ public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoAp
     public async Task UpdateTodo_WhenDescriptionIsDuplicated_ShouldReturnBadRequest()
     {
         // Arrange
-        using var client = _factory.CreateClient();
+        using var client = factory.CreateClient();
 
         var todo1 = await Mother.CreateTodoAsync(client);
         _createdTodos.Add(todo1.Id);
@@ -313,7 +314,7 @@ public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoAp
     public async Task UpdateTodo_WhenDescriptionIsDuplicatedWithMixedCasing_ShouldReturnBadRequest()
     {
         // Arrange
-        using var client = _factory.CreateClient();
+        using var client = factory.CreateClient();
 
         var todo1 = await Mother.CreateTodoAsync(client);
         _createdTodos.Add(todo1.Id);
@@ -342,7 +343,7 @@ public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoAp
     public async Task DeleteTodo_WhenTodoIsDeleted_ShouldReturnNoContent()
     {
         // Arrange
-        using var client = _factory.CreateClient();
+        using var client = factory.CreateClient();
         var createdTodo = await Mother.CreateTodoAsync(client);
         _createdTodos.Add(createdTodo.Id);
 
@@ -357,7 +358,7 @@ public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoAp
     public async Task DeleteTodo_WhenTodoDoesNotExist_ShouldReturnNotFound()
     {
         // Arrange
-        using var client = _factory.CreateClient();
+        using var client = factory.CreateClient();
         var badId = Mother.GeneratePositiveLong();
 
         // Act
@@ -371,7 +372,7 @@ public class TodosEndpointsTests(TodoApiFactory _factory) : IClassFixture<TodoAp
 
     public async Task DisposeAsync()
     {
-        var httpClient = _factory.CreateClient();
+        var httpClient = factory.CreateClient();
         foreach (var createdTodo in _createdTodos)
         {
             _ = await httpClient.DeleteAsync($"{Mother.TodosBasePath}/{createdTodo}");
