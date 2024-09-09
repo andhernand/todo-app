@@ -1,21 +1,15 @@
-﻿using FluentValidation;
-
-using TodoApp.Contracts.Requests;
+﻿using TodoApp.Contracts.Requests;
 using TodoApp.Contracts.Responses;
 using TodoApp.Core.Mapping;
-using TodoApp.Core.Models;
 using TodoApp.Core.Repositories;
 
 namespace TodoApp.Core.Services;
 
-public class TodoService(ITodoRepository repository, IValidator<Todo> validator) : ITodoService
+public class TodoService(ITodoRepository repository) : ITodoService
 {
     public async Task<TodoResponse> CreateAsync(CreateTodoRequest request, CancellationToken token = default)
     {
         var todoRequest = request.MapToTodo();
-
-        await validator.ValidateAndThrowAsync(todoRequest, token);
-
         var todo = await repository.CreateAsync(todoRequest, token);
         return todo.MapToResponse();
     }
@@ -38,8 +32,6 @@ public class TodoService(ITodoRepository repository, IValidator<Todo> validator)
         CancellationToken token = default)
     {
         var todo = request.MapToTodo(id);
-        await validator.ValidateAndThrowAsync(todo, token);
-
         var exists = await repository.ExistsById(id, token);
         if (!exists)
         {
