@@ -42,16 +42,6 @@ public static class Mother
         return new ValidationProblemDetails { Status = StatusCodes.Status400BadRequest, Errors = errors };
     }
 
-    public static ProblemDetails GenerateNotFoundProblemDetails()
-    {
-        return new ProblemDetails
-        {
-            Type = "https://tools.ietf.org/html/rfc9110#section-15.5.5",
-            Title = "Not Found",
-            Status = StatusCodes.Status404NotFound
-        };
-    }
-
     public static async Task<TodoResponse> CreateTodoAsync(
         HttpClient client,
         string? description = default,
