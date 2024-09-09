@@ -3,13 +3,11 @@
 export const handlers = [
   http.get('/api/todos', () => {
     return HttpResponse.json(
-      {
-        todos: [
-          { id: 1, description: 'take out the trash', isCompleted: false },
-          { id: 2, description: 'do the laundry', isCompleted: false },
-          { id: 3, description: 'clean bathroom', isCompleted: false },
-        ],
-      },
+      [
+        { id: 1, description: 'take out the trash', isCompleted: false },
+        { id: 2, description: 'do the laundry', isCompleted: false },
+        { id: 3, description: 'clean bathroom', isCompleted: false },
+      ],
       { status: 200 },
     );
   }),

@@ -19,7 +19,7 @@ function App() {
           if (response.status === 200) {
             dispatch({
               type: INITIALIZE_TODOS,
-              payload: response.data.todos,
+              payload: response.data,
             });
           }
         })
