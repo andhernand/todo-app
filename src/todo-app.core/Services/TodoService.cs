@@ -32,17 +32,24 @@ public class TodoService(ITodoRepository repository, IValidator<Todo> validator)
         return todos.MapToResponse();
     }
 
-    public async Task<Todo?> UpdateAsync(Todo todo, CancellationToken token = default)
+    public async Task<TodoResponse?> UpdateAsync(
+        long id,
+        UpdateTodoRequest request,
+        CancellationToken token = default)
     {
+        var todo = request.MapToTodo(id);
         await validator.ValidateAndThrowAsync(todo, token);
-        var exists = await repository.ExistsById(todo.Id, token);
+
+        var exists = await repository.ExistsById(id, token);
         if (!exists)
         {
             return null;
         }
 
-        _ = await repository.UpdateAsync(todo, token);
-        return todo;
+        var updated = await repository.UpdateAsync(todo, token);
+        return updated
+            ? todo.MapToResponse()
+            : null;
     }
 
     public async Task<bool> DeleteAsync(long id, CancellationToken token = default)
