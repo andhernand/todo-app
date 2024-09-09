@@ -20,9 +20,10 @@ public class TodoService(ITodoRepository repository, IValidator<Todo> validator)
         return todo.MapToResponse();
     }
 
-    public Task<Todo?> GetByIdAsync(long id, CancellationToken token = default)
+    public async Task<TodoResponse?> GetByIdAsync(long id, CancellationToken token = default)
     {
-        return repository.GetByIdAsync(id, token);
+        var todo = await repository.GetByIdAsync(id, token);
+        return todo?.MapToResponse();
     }
 
     public async Task<IEnumerable<TodoResponse>> GetAllAsync(CancellationToken token = default)
