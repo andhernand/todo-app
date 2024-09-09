@@ -3,6 +3,7 @@
 using TodoApp.Contracts.Requests;
 using TodoApp.Contracts.Responses;
 using TodoApp.Core.Services;
+using TodoApp.Server.Endpoints.Todos.Filters;
 
 namespace TodoApp.Server.Endpoints.Todos;
 
@@ -28,6 +29,7 @@ public static class CreateTodoEndpoint
             .WithName(Name)
             .WithTags(ApiEndpoints.Todos.Tag)
             .Accepts<CreateTodoRequest>(contentType: "application/json")
+            .AddEndpointFilter<RequestValidationFilter<CreateTodoRequest>>()
             .WithOpenApi();
     }
 }

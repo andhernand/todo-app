@@ -2,7 +2,7 @@
 
 using TodoApp.Core.Database;
 
-namespace TodoApp.Server.Health;
+namespace TodoApp.Core.Health;
 
 public class DatabaseHealthCheck(IDbConnectionFactory _dbConnectionFactory) : IHealthCheck
 {

@@ -88,7 +88,7 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
         var request = Mother.GenerateCreateTodoRequest(description: todo.Description, isCompleted: todo.IsCompleted);
         var expected = Mother.GenerateValidationProblemDetails(new Dictionary<string, string[]>
         {
-            { "Todo", ["A 'Todo' with a duplicate 'Description' exists in the system."] }
+            { "Todo", ["A 'Todo' with a duplicate 'Description' exists in the system"] }
         });
 
         // Act
@@ -113,7 +113,7 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
             isCompleted: todo.IsCompleted);
         var expected = Mother.GenerateValidationProblemDetails(new Dictionary<string, string[]>
         {
-            { "Todo", ["A 'Todo' with a duplicate 'Description' exists in the system."] }
+            { "Todo", ["A 'Todo' with a duplicate 'Description' exists in the system"] }
         });
 
         // Act
@@ -204,7 +204,7 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
         var todo = await Mother.CreateTodoAsync(client);
         _createdTodos.Add(todo.Id);
 
-        var request = Mother.GenerateUpdateTodoRequest(todo.Description, !todo.IsCompleted);
+        var request = Mother.GenerateUpdateTodoRequest(todo.Id, todo.Description, !todo.IsCompleted);
         var expected = new TodoResponse
         {
             Id = todo.Id, Description = request.Description, IsCompleted = request.IsCompleted
@@ -224,7 +224,7 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
     {
         // Arrange
         using var client = factory.CreateClient();
-        var request = Mother.GenerateUpdateTodoRequest();
+        var request = Mother.GenerateUpdateTodoRequest(-2);
         var expected = Mother.GenerateValidationProblemDetails(new Dictionary<string, string[]>
         {
             { "Id", ["'Id' must be greater than or equal to '1'."] }
@@ -248,7 +248,7 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
         var todo = await Mother.CreateTodoAsync(client);
         _createdTodos.Add(todo.Id);
 
-        var request = Mother.GenerateUpdateTodoRequest("", false);
+        var request = Mother.GenerateUpdateTodoRequest(todo.Id, "", todo.IsCompleted);
         var expected = Mother.GenerateValidationProblemDetails(new Dictionary<string, string[]>
         {
             { "Description", ["'Description' must not be empty."] }
@@ -268,8 +268,8 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
     {
         // Arrange
         using var client = factory.CreateClient();
-        var request = Mother.GenerateUpdateTodoRequest();
         var badId = Mother.GeneratePositiveLong();
+        var request = Mother.GenerateUpdateTodoRequest(badId);
 
         // Act
         var response = await client.PutAsJsonAsync($"{Mother.TodosBasePath}/{badId}", request);
@@ -289,10 +289,14 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
         var todo2 = await Mother.CreateTodoAsync(client);
         _createdTodos.Add(todo2.Id);
 
-        var request = Mother.GenerateUpdateTodoRequest(description: todo1.Description, isCompleted: todo2.IsCompleted);
+        var request = Mother.GenerateUpdateTodoRequest(
+            todo2.Id,
+            todo1.Description,
+            todo2.IsCompleted);
+
         var expected = Mother.GenerateValidationProblemDetails(new Dictionary<string, string[]>
         {
-            { "Todo", ["A 'Todo' with a duplicate 'Description' exists in the system."] }
+            { "Todo", ["A 'Todo' with a duplicate 'Description' exists in the system"] }
         });
 
         // Act
@@ -316,12 +320,13 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
         _createdTodos.Add(todo2.Id);
 
         var request = Mother.GenerateUpdateTodoRequest(
-            description: todo1.Description.ToLowerInvariant(),
-            isCompleted: todo2.IsCompleted);
+            todo2.Id,
+            todo1.Description.ToLowerInvariant(),
+            todo2.IsCompleted);
 
         var expected = Mother.GenerateValidationProblemDetails(new Dictionary<string, string[]>
         {
-            { "Todo", ["A 'Todo' with a duplicate 'Description' exists in the system."] }
+            { "Todo", ["A 'Todo' with a duplicate 'Description' exists in the system"] }
         });
 
         // Act

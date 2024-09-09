@@ -2,10 +2,9 @@ using Serilog;
 
 using TodoApp.Core;
 using TodoApp.Core.Database;
+using TodoApp.Core.Health;
 using TodoApp.Server;
 using TodoApp.Server.Endpoints;
-using TodoApp.Server.Health;
-using TodoApp.Server.Mapping;
 
 Log.Logger = Extensions.CreateBootstrapLogger();
 
@@ -44,7 +43,6 @@ try
         app.UseHttpsRedirection();
         app.UseSerilogRequestLogging();
         app.UseHealthChecks(new PathString("/_health"));
-        app.UseMiddleware<ValidationMappingMiddleware>();
         app.MapApiEndpoints();
     }
 
