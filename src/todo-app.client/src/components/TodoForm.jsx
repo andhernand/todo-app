@@ -24,6 +24,7 @@ const TodoForm = ({ dispatch, editingTodo }) => {
 
     if (editingTodo) {
       const todo = {
+        id: editingTodo.id,
         description: task,
         isCompleted: editingTodo.isCompleted,
       };
