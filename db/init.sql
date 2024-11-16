@@ -2,11 +2,11 @@ IF (DB_ID(N'TodoApiDb') IS NULL)
 	BEGIN
 		PRINT 'Creating the database.';
 		CREATE DATABASE [TodoApiDb];
-	END
+	END;
 ELSE
 	BEGIN
 		PRINT 'Database already exists.';
-	END
+	END;
 GO
 
 IF NOT EXISTS(SELECT 1
@@ -16,9 +16,9 @@ IF NOT EXISTS(SELECT 1
 	BEGIN
 		PRINT 'Creating the login.';
 		CREATE LOGIN [todoapi] WITH PASSWORD = N'$(varApiPassword)', DEFAULT_DATABASE = [TodoApiDb];
-	END
+	END;
 ELSE
 	BEGIN
 		PRINT 'Login already exists.';
-	END
+	END;
 GO
