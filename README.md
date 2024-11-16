@@ -4,7 +4,7 @@ This project is a simple Todo application that allows users to manage their task
 
 ## Prerequisites
 
-- [.NET 8.0 SDK](https://dotnet.microsoft.com/download)
+- [.NET 9.0 SDK](https://dotnet.microsoft.com/download)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop)
 - [Node.js](https://nodejs.org)
 
