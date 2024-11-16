@@ -120,22 +120,4 @@ public class TodoRepository(IDbConnectionFactory dbConnectionFactory) : ITodoRep
         var rowCount = parameters.Get<int>("@RowCount");
         return rowCount > 0;
     }
-
-    public async Task<bool> ExistsById(long id, CancellationToken token = default)
-    {
-        _logger.Information("Does Todo Exist with {Id}", id);
-        using var connection = await dbConnectionFactory.CreateConnectionAsync(token);
-
-        var parameters = new DynamicParameters();
-        parameters.Add("@Id", id, DbType.Int64, ParameterDirection.Input);
-
-        var exists = await connection.ExecuteScalarAsync<bool>(
-            new CommandDefinition(
-                "[dbo].[usp_Todo_ExistsById]",
-                parameters,
-                commandType: CommandType.StoredProcedure,
-                cancellationToken: token));
-
-        return exists;
-    }
 }

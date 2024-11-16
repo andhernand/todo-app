@@ -169,22 +169,3 @@ BEGIN
 	END CATCH
 END
 GO
-
-CREATE PROC [dbo].[usp_Todo_ExistsById](
-	@Id BIGINT
-)
-AS
-BEGIN
-	-- Validate @Id
-	IF @Id IS NULL OR @Id <= 0
-		BEGIN
-			THROW 50008, 'The Id parameter must have a positive value.', 1;
-		END
-
-	SET NOCOUNT ON;
-
-	SELECT COUNT(1)
-	FROM [dbo].[Todo]
-	WHERE [Id] = @Id;
-END
-GO
