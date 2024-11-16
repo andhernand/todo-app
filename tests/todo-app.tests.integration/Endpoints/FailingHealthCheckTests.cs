@@ -13,7 +13,7 @@ public class FailingHealthCheckFactory : WebApplicationFactory<ITodoAppMarker>
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseSetting(
-            "Database:ConnectionString",
+            "ConnectionStrings:TodoApi",
             "Data Source=localhost,9443;Connect Timeout=1;Trust Server Certificate=True;");
         base.ConfigureWebHost(builder);
     }

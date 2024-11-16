@@ -17,8 +17,8 @@ public static class ServiceCollectionExtensions
         services.AddValidatorsFromAssemblyContaining<ITodoAppCoreMarker>();
     }
 
-    public static void AddTodoApiDatabase(this IServiceCollection services, DatabaseOptions dbOptions)
+    public static void AddTodoApiDatabase(this IServiceCollection services, string connectionString)
     {
-        services.AddSingleton<IDbConnectionFactory>(_ => new SqlServerConnectionFactory(dbOptions.ConnectionString));
+        services.AddSingleton<IDbConnectionFactory>(_ => new SqlServerConnectionFactory(connectionString));
     }
 }
