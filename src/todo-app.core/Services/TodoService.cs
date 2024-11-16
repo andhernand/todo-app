@@ -32,12 +32,6 @@ public class TodoService(ITodoRepository repository) : ITodoService
         CancellationToken token = default)
     {
         var todo = request.MapToTodo(id);
-        var exists = await repository.ExistsById(id, token);
-        if (!exists)
-        {
-            return null;
-        }
-
         var updated = await repository.UpdateAsync(todo, token);
         return updated
             ? todo.MapToResponse()
@@ -46,12 +40,6 @@ public class TodoService(ITodoRepository repository) : ITodoService
 
     public async Task<bool> DeleteAsync(long id, CancellationToken token = default)
     {
-        var exists = await repository.ExistsById(id, token);
-        if (!exists)
-        {
-            return false;
-        }
-
         return await repository.DeleteAsync(id, token);
     }
 }
