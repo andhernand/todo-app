@@ -1,7 +1,7 @@
 using Serilog;
 
-using TodoApp.Core;
 using TodoApp.Core.Database;
+using TodoApp.Core.DependencyInjection;
 using TodoApp.Core.Health;
 using TodoApp.Server;
 using TodoApp.Server.Endpoints;
