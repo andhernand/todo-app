@@ -54,7 +54,7 @@ public class TodoApiFactory : WebApplicationFactory<ITodoAppMarker>, IAsyncLifet
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.UseSetting("Database:ConnectionString", BuildDatabaseConnectionString());
+        builder.UseSetting("ConnectionStrings:TodoApi", BuildDatabaseConnectionString());
         base.ConfigureWebHost(builder);
     }
 

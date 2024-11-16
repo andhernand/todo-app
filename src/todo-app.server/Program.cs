@@ -1,6 +1,5 @@
 using Serilog;
 
-using TodoApp.Core.Database;
 using TodoApp.Core.DependencyInjection;
 using TodoApp.Core.Health;
 using TodoApp.Server;
@@ -24,11 +23,10 @@ try
             .AddHealthChecks()
             .AddCheck<DatabaseHealthCheck>(DatabaseHealthCheck.Name);
 
-        using var config = builder.Configuration;
-        var dbOptions = new DatabaseOptions();
-        config.GetSection(DatabaseOptions.Key).Bind(dbOptions);
+        var connectionString = builder.Configuration.GetConnectionString("TodoApi")
+                               ?? throw new NullReferenceException("Connection string is null");
 
-        builder.Services.AddTodoApiDatabase(dbOptions);
+        builder.Services.AddTodoApiDatabase(connectionString);
         builder.Services.AddTodoApiApplication();
     }
 
