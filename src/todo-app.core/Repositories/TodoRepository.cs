@@ -2,18 +2,21 @@
 
 using Dapper;
 
+using Microsoft.Extensions.Logging;
+
 using TodoApp.Core.Database;
 using TodoApp.Core.Models;
 
 namespace TodoApp.Core.Repositories;
 
-public class TodoRepository(IDbConnectionFactory dbConnectionFactory) : ITodoRepository
+public class TodoRepository(
+    IDbConnectionFactory dbConnectionFactory,
+    ILogger<TodoRepository> logger)
+    : ITodoRepository
 {
-    private readonly Serilog.ILogger _logger = Serilog.Log.ForContext<TodoRepository>();
-
     public async Task<Todo> CreateAsync(Todo todo, CancellationToken token = default)
     {
-        _logger.Information("Creating new {@Todo}", todo);
+        logger.LogInformation("Creating new {@Todo}", todo);
         using var connection = await dbConnectionFactory.CreateConnectionAsync(token);
 
         var parameters = new DynamicParameters();
@@ -33,7 +36,7 @@ public class TodoRepository(IDbConnectionFactory dbConnectionFactory) : ITodoRep
 
     public async Task<Todo?> GetByIdAsync(long id, CancellationToken token = default)
     {
-        _logger.Information("Get Todo By {Id}", id);
+        logger.LogInformation("Get Todo By {Id}", id);
         using var connection = await dbConnectionFactory.CreateConnectionAsync(token);
 
         var parameters = new DynamicParameters();
@@ -51,7 +54,7 @@ public class TodoRepository(IDbConnectionFactory dbConnectionFactory) : ITodoRep
 
     public async Task<Todo?> GetByDescriptionAsync(string description, CancellationToken token = default)
     {
-        _logger.Information("Get Todo By {Description}", description);
+        logger.LogInformation("Get Todo By {Description}", description);
         using var connection = await dbConnectionFactory.CreateConnectionAsync(token);
 
         var parameters = new DynamicParameters();
@@ -69,7 +72,7 @@ public class TodoRepository(IDbConnectionFactory dbConnectionFactory) : ITodoRep
 
     public async Task<IEnumerable<Todo>> GetAllAsync(CancellationToken token = default)
     {
-        _logger.Information("Get All Todos");
+        logger.LogInformation("Get All Todos");
         using var connection = await dbConnectionFactory.CreateConnectionAsync(token);
 
         var todo = await connection.QueryAsync<Todo>(
@@ -83,7 +86,7 @@ public class TodoRepository(IDbConnectionFactory dbConnectionFactory) : ITodoRep
 
     public async Task<bool> UpdateAsync(Todo todo, CancellationToken token = default)
     {
-        _logger.Information("Updating {@Todo}", todo);
+        logger.LogInformation("Updating {@Todo}", todo);
         using var connection = await dbConnectionFactory.CreateConnectionAsync(token);
 
         var parameters = new DynamicParameters();
@@ -104,7 +107,7 @@ public class TodoRepository(IDbConnectionFactory dbConnectionFactory) : ITodoRep
 
     public async Task<bool> DeleteAsync(long id, CancellationToken token = default)
     {
-        _logger.Information("Delete Todo By {Id}", id);
+        logger.LogInformation("Delete Todo By {Id}", id);
         using var connection = await dbConnectionFactory.CreateConnectionAsync(token);
 
         var parameters = new DynamicParameters();
