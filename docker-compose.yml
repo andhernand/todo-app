@@ -3,16 +3,16 @@ name: todoapidb
 services:
   sqlserver:
     container_name: sqlserver
-    image: mcr.microsoft.com/mssql/server:2022-CU13-ubuntu-22.04
+    image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
-      SA_PASSWORD: ${TODO_API_SA_PASSWORD}
+      MSSQL_SA_PASSWORD: ${TODO_API_SA_PASSWORD}
       ACCEPT_EULA: Y
       MSSQL_PID: Developer
     ports:
       - "6433:1433"
     restart: always
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P \"${TODO_API_SA_PASSWORD}\" -Q 'SELECT 1' || exit 1"]
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P \"${TODO_API_SA_PASSWORD}\" -Q 'SELECT 1' || exit 1"]
       interval: 10s
       retries: 10
       start_period: 13s
@@ -20,7 +20,7 @@ services:
 
   init-db:
     container_name: init-db
-    image: mcr.microsoft.com/mssql/server:2022-CU13-ubuntu-22.04
+    image: mcr.microsoft.com/mssql/server:2022-latest
     volumes:
       - ./db/init.sql:/init.sql:ro
     depends_on:
@@ -29,13 +29,13 @@ services:
     command: >
       /bin/bash -c "
       echo 'Running the init.sql script.';
-      /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P '${TODO_API_SA_PASSWORD}' -v varApiPassword='${TODO_API_USER_PASSWORD}' -d master -i /init.sql;
+      /opt/mssql-tools18/bin/sqlcmd -C -S sqlserver -U sa -P '${TODO_API_SA_PASSWORD}' -v varApiPassword='${TODO_API_USER_PASSWORD}' -d master -i /init.sql;
       echo 'All done!';
       "
 
   flyway:
     container_name: flyway
-    image: redgate/flyway:10.17.2
+    image: redgate/flyway:latest
     depends_on:
       init-db:
         condition: service_completed_successfully
