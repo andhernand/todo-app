@@ -77,55 +77,6 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
     }
 
     [Fact]
-    public async Task CreateTodo_WhenTodoWithDescriptionAlreadyExists_ShouldReturnBadRequest()
-    {
-        // Arrange
-        using var client = factory.CreateClient();
-
-        var todo = await Mother.CreateTodoAsync(client);
-        _createdTodos.Add(todo.Id);
-
-        var request = Mother.GenerateCreateTodoRequest(description: todo.Description, isCompleted: todo.IsCompleted);
-        var expected = Mother.GenerateValidationProblemDetails(new Dictionary<string, string[]>
-        {
-            { "Todo", ["A 'Todo' with a duplicate 'Description' exists in the system"] }
-        });
-
-        // Act
-        var response = await client.PostAsJsonAsync(Mother.TodosBasePath, request);
-
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        var errors = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
-        errors.Should().BeEquivalentTo(expected);
-    }
-
-    [Fact]
-    public async Task CreateTodo_WhenTodoWithDescriptionWithMixedCaseAlreadyExists_ShouldReturnBadRequest()
-    {
-        // Arrange
-        using var client = factory.CreateClient();
-
-        var todo = await Mother.CreateTodoAsync(client, description: "THIS iS Mixed CasE.");
-        _createdTodos.Add(todo.Id);
-
-        var request = Mother.GenerateCreateTodoRequest(description: todo.Description.ToLowerInvariant(),
-            isCompleted: todo.IsCompleted);
-        var expected = Mother.GenerateValidationProblemDetails(new Dictionary<string, string[]>
-        {
-            { "Todo", ["A 'Todo' with a duplicate 'Description' exists in the system"] }
-        });
-
-        // Act
-        var response = await client.PostAsJsonAsync(Mother.TodosBasePath, request);
-
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        var errors = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
-        errors.Should().BeEquivalentTo(expected);
-    }
-
-    [Fact]
     public async Task GetTodoById_WhenTodoExists_ShouldReturnTodo()
     {
         // Arrange
@@ -276,66 +227,6 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-    }
-
-    [Fact]
-    public async Task UpdateTodo_WhenDescriptionIsDuplicated_ShouldReturnBadRequest()
-    {
-        // Arrange
-        using var client = factory.CreateClient();
-
-        var todo1 = await Mother.CreateTodoAsync(client);
-        _createdTodos.Add(todo1.Id);
-        var todo2 = await Mother.CreateTodoAsync(client);
-        _createdTodos.Add(todo2.Id);
-
-        var request = Mother.GenerateUpdateTodoRequest(
-            todo2.Id,
-            todo1.Description,
-            todo2.IsCompleted);
-
-        var expected = Mother.GenerateValidationProblemDetails(new Dictionary<string, string[]>
-        {
-            { "Todo", ["A 'Todo' with a duplicate 'Description' exists in the system"] }
-        });
-
-        // Act
-        var response = await client.PutAsJsonAsync($"{Mother.TodosBasePath}/{todo2.Id}", request);
-
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        var errors = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
-        errors.Should().BeEquivalentTo(expected);
-    }
-
-    [Fact]
-    public async Task UpdateTodo_WhenDescriptionIsDuplicatedWithMixedCasing_ShouldReturnBadRequest()
-    {
-        // Arrange
-        using var client = factory.CreateClient();
-
-        var todo1 = await Mother.CreateTodoAsync(client);
-        _createdTodos.Add(todo1.Id);
-        var todo2 = await Mother.CreateTodoAsync(client);
-        _createdTodos.Add(todo2.Id);
-
-        var request = Mother.GenerateUpdateTodoRequest(
-            todo2.Id,
-            todo1.Description.ToLowerInvariant(),
-            todo2.IsCompleted);
-
-        var expected = Mother.GenerateValidationProblemDetails(new Dictionary<string, string[]>
-        {
-            { "Todo", ["A 'Todo' with a duplicate 'Description' exists in the system"] }
-        });
-
-        // Act
-        var response = await client.PutAsJsonAsync($"{Mother.TodosBasePath}/{todo2.Id}", request);
-
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        var errors = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
-        errors.Should().BeEquivalentTo(expected);
     }
 
     [Fact]

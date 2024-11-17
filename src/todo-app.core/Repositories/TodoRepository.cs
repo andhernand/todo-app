@@ -20,7 +20,7 @@ public class TodoRepository(
         using var connection = await dbConnectionFactory.CreateConnectionAsync(token);
 
         var parameters = new DynamicParameters();
-        parameters.Add("@Description", todo.Description, DbType.String, ParameterDirection.Input, 512);
+        parameters.Add("@Description", todo.Description, DbType.String, ParameterDirection.Input, 64);
         parameters.Add("@IsCompleted", todo.IsCompleted, DbType.Boolean, ParameterDirection.Input);
         parameters.Add("@TodoId", 0, DbType.Int64, ParameterDirection.Output);
 
@@ -52,24 +52,6 @@ public class TodoRepository(
         return todo;
     }
 
-    public async Task<Todo?> GetByDescriptionAsync(string description, CancellationToken token = default)
-    {
-        logger.LogInformation("Get Todo By {Description}", description);
-        using var connection = await dbConnectionFactory.CreateConnectionAsync(token);
-
-        var parameters = new DynamicParameters();
-        parameters.Add("@Description", description, DbType.String, ParameterDirection.Input, 512);
-
-        var todo = await connection.QuerySingleOrDefaultAsync<Todo>(
-            new CommandDefinition(
-                "[dbo].[usp_Todo_GetByDescription]",
-                parameters,
-                commandType: CommandType.StoredProcedure,
-                cancellationToken: token));
-
-        return todo;
-    }
-
     public async Task<IEnumerable<Todo>> GetAllAsync(CancellationToken token = default)
     {
         logger.LogInformation("Get All Todos");
@@ -91,7 +73,7 @@ public class TodoRepository(
 
         var parameters = new DynamicParameters();
         parameters.Add("@Id", todo.Id, DbType.Int64, ParameterDirection.Input);
-        parameters.Add("@Description", todo.Description, DbType.String, ParameterDirection.Input, 512);
+        parameters.Add("@Description", todo.Description, DbType.String, ParameterDirection.Input, 64);
         parameters.Add("@IsCompleted", todo.IsCompleted, DbType.Boolean, ParameterDirection.Input);
         parameters.Add("@RowCount", 0, DbType.Int32, ParameterDirection.Output);
 
