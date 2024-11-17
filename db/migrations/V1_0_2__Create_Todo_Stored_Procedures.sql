@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[usp_Todo_Insert](
-	@Description NVARCHAR(512),
+	@Description NVARCHAR(64),
 	@IsCompleted BIT,
 	@TodoId BIGINT OUTPUT
 )
@@ -56,29 +56,6 @@ BEGIN
 END
 GO
 
-CREATE PROCEDURE [dbo].[usp_Todo_GetByDescription](
-	@Description NVARCHAR(512)
-)
-AS
-BEGIN
-	-- Validate @Description
-	IF @Description IS NULL OR LEN(@Description) <= 0
-		BEGIN
-			THROW 50003, 'The Description parameter must have a value.', 1;
-		END
-
-	SET NOCOUNT ON;
-
-	DECLARE @Description_Lower NVARCHAR(512) = LOWER(@Description);
-
-	SELECT T.[Id],
-		   T.[Description],
-		   T.[IsCompleted]
-	FROM [dbo].[Todo] T
-	WHERE T.[Description_Lower] LIKE '%' + @Description_Lower + '%';
-END
-GO
-
 CREATE PROCEDURE [dbo].[usp_Todo_GetAll]
 AS
 BEGIN
@@ -93,7 +70,7 @@ GO
 
 CREATE PROCEDURE [dbo].[usp_Todo_Update](
 	@Id BIGINT,
-	@Description NVARCHAR(512),
+	@Description NVARCHAR(64),
 	@IsCompleted BIT,
 	@RowCount INT OUTPUT
 )
