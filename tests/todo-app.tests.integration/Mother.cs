@@ -10,14 +10,13 @@ namespace Todo.App.Tests.Integration;
 public static class Mother
 {
     public const string TodosBasePath = "/api/todos";
-    private static readonly Faker Fake = new();
 
     public static CreateTodoRequest GenerateCreateTodoRequest(
         string? description = default,
         bool? isCompleted = default)
     {
         return new Faker<CreateTodoRequest>()
-            .RuleFor(x => x.Description, f => description ?? f.Lorem.Sentence())
+            .RuleFor(x => x.Description, f => description ?? f.Lorem.Sentence(3))
             .RuleFor(x => x.IsCompleted, f => isCompleted ?? f.Random.Bool())
             .Generate();
     }
@@ -29,14 +28,15 @@ public static class Mother
     {
         return new Faker<UpdateTodoRequest>()
             .RuleFor(x => x.Id, f => id ?? f.Random.Long())
-            .RuleFor(x => x.Description, f => description ?? f.Lorem.Sentence())
+            .RuleFor(x => x.Description, f => description ?? f.Lorem.Sentence(3))
             .RuleFor(x => x.IsCompleted, f => isCompleted ?? f.Random.Bool())
             .Generate();
     }
 
-    public static long GeneratePositiveLong(long min = 1, long max = long.MaxValue)
+    public static long GeneratePositiveLong(long min = 10_000, long max = long.MaxValue)
     {
-        return Fake.Random.Long(min, max);
+        var faker = new Faker();
+        return faker.Random.Long(min, max);
     }
 
     public static ValidationProblemDetails GenerateValidationProblemDetails(Dictionary<string, string[]> errors)
