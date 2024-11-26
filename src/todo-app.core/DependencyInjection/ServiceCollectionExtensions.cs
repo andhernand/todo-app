@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using TodoApp.Core.Database;
@@ -17,8 +18,11 @@ public static class ServiceCollectionExtensions
         services.AddValidatorsFromAssemblyContaining<ITodoAppCoreMarker>();
     }
 
-    public static void AddTodoApiDatabase(this IServiceCollection services, string connectionString)
+    public static void AddTodoApiDatabase(this IServiceCollection services, IConfiguration config)
     {
+        var connectionString = config.GetConnectionString("TodoApi")
+                               ?? throw new NullReferenceException("TodoApi connection string is null");
+
         services.AddSingleton<IDbConnectionFactory>(_ => new SqlServerConnectionFactory(connectionString));
     }
 }

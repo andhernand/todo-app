@@ -8,10 +8,12 @@ namespace TodoApp.Server.Endpoints.Todos;
 public static class GetAllTodosEndpoint
 {
     private const string Name = "GetAllTodos";
+    private const string Description = "Get all the todos";
+    private const string Route = "/";
 
-    public static void MapGetAllTodosEndpoint(this IEndpointRouteBuilder builder)
+    public static RouteGroupBuilder MapGetAllTodosEndpoint(this RouteGroupBuilder group)
     {
-        builder.MapGet(ApiEndpoints.Todos.GetAll,
+        group.MapGet(Route,
                 async Task<Ok<IEnumerable<TodoResponse>>> (
                     ITodoService service,
                     CancellationToken token = default) =>
@@ -20,7 +22,8 @@ public static class GetAllTodosEndpoint
                     return TypedResults.Ok(todos);
                 })
             .WithName(Name)
-            .WithTags(ApiEndpoints.Todos.Tag)
-            .WithOpenApi();
+            .WithDescription(Description);
+
+        return group;
     }
 }

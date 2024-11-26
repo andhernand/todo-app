@@ -8,10 +8,12 @@ namespace TodoApp.Server.Endpoints.Todos;
 public static class GetTodoByIdEndpoint
 {
     public const string Name = "GetTodoById";
+    private const string Description = "Get a Todo by Id";
+    private const string Route = "{id:long}";
 
-    public static void MapGetTodoByIdEndpoint(this IEndpointRouteBuilder builder)
+    public static RouteGroupBuilder MapGetTodoByIdEndpoint(this RouteGroupBuilder group)
     {
-        builder.MapGet(ApiEndpoints.Todos.GetById,
+        group.MapGet(Route,
                 async Task<Results<Ok<TodoResponse>, NotFound>> (
                     long id,
                     ITodoService service,
@@ -26,7 +28,8 @@ public static class GetTodoByIdEndpoint
                     return TypedResults.Ok(todo);
                 })
             .WithName(Name)
-            .WithTags(ApiEndpoints.Todos.Tag)
-            .WithOpenApi();
+            .WithDescription(Description);
+
+        return group;
     }
 }

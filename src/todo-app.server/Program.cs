@@ -2,55 +2,33 @@ using Serilog;
 
 using TodoApp.Core.DependencyInjection;
 using TodoApp.Core.Health;
-using TodoApp.Server;
 using TodoApp.Server.Endpoints;
 
-Log.Logger = Extensions.CreateBootstrapLogger();
+var builder = WebApplication.CreateBuilder(args);
 
-try
+builder.Host.UseSerilog((context, logConfig) =>
+    logConfig.ReadFrom.Configuration(context.Configuration));
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddHealthChecks()
+    .AddCheck<DatabaseHealthCheck>(DatabaseHealthCheck.Name);
+
+builder.Services.AddTodoApiDatabase(builder.Configuration);
+builder.Services.AddTodoApiApplication();
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
 {
-    Log.Information("Starting Todo-App API");
-
-    var builder = WebApplication.CreateBuilder(args);
-    {
-        builder.Host.UseSerilog((context, logConfig) =>
-            logConfig.ReadFrom.Configuration(context.Configuration));
-
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-
-        builder.Services
-            .AddHealthChecks()
-            .AddCheck<DatabaseHealthCheck>(DatabaseHealthCheck.Name);
-
-        var connectionString = builder.Configuration.GetConnectionString("TodoApi")
-                               ?? throw new NullReferenceException("Connection string is null");
-
-        builder.Services.AddTodoApiDatabase(connectionString);
-        builder.Services.AddTodoApiApplication();
-    }
-
-    var app = builder.Build();
-    {
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
-
-        app.UseHttpsRedirection();
-        app.UseSerilogRequestLogging();
-        app.UseHealthChecks(new PathString("/_health"));
-        app.MapApiEndpoints();
-    }
-
-    app.Run();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
-catch (Exception ex)
-{
-    Log.Fatal(ex, "Application terminated unexpectedly");
-}
-finally
-{
-    Log.CloseAndFlush();
-}
+
+app.UseHttpsRedirection();
+app.UseSerilogRequestLogging();
+app.UseHealthChecks(new PathString("/_health"));
+app.MapTodoApiEndpoints();
+
+app.Run();

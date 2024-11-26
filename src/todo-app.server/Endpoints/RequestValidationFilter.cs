@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace TodoApp.Server.Endpoints.Todos.Filters;
+namespace TodoApp.Server.Endpoints;
 
 public class RequestValidationFilter<T>(
     IValidator<T> validator,
