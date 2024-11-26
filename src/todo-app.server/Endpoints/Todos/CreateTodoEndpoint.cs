@@ -1,19 +1,22 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using System.Net.Mime;
+
+using Microsoft.AspNetCore.Http.HttpResults;
 
 using TodoApp.Contracts.Requests;
 using TodoApp.Contracts.Responses;
 using TodoApp.Core.Services;
-using TodoApp.Server.Endpoints.Todos.Filters;
 
 namespace TodoApp.Server.Endpoints.Todos;
 
 public static class CreateTodoEndpoint
 {
     private const string Name = "CreateTodo";
+    private const string Description = "Create a new Todo";
+    private const string Route = "/";
 
-    public static void MapCreateTodoEndpoint(this IEndpointRouteBuilder builder)
+    public static RouteGroupBuilder MapCreateTodoEndpoint(this RouteGroupBuilder group)
     {
-        builder.MapPost(ApiEndpoints.Todos.Create,
+        group.MapPost(Route,
                 async Task<Results<CreatedAtRoute<TodoResponse>, ValidationProblem>> (
                     CreateTodoRequest request,
                     ITodoService service,
@@ -27,9 +30,10 @@ public static class CreateTodoEndpoint
                         new { id = created.Id });
                 })
             .WithName(Name)
-            .WithTags(ApiEndpoints.Todos.Tag)
-            .Accepts<CreateTodoRequest>(contentType: "application/json")
-            .AddEndpointFilter<RequestValidationFilter<CreateTodoRequest>>()
-            .WithOpenApi();
+            .WithDescription(Description)
+            .Accepts<CreateTodoRequest>(false, MediaTypeNames.Application.Json)
+            .AddEndpointFilter<RequestValidationFilter<CreateTodoRequest>>();
+
+        return group;
     }
 }

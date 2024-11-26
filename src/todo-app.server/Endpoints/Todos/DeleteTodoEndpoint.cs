@@ -7,10 +7,12 @@ namespace TodoApp.Server.Endpoints.Todos;
 public static class DeleteTodoEndpoint
 {
     private const string Name = "DeleteTodo";
+    private const string Description = "Delete a todo";
+    private const string Route = "{id:long}";
 
-    public static void MapDeleteTodoEndpoint(this IEndpointRouteBuilder builder)
+    public static RouteGroupBuilder MapDeleteTodoEndpoint(this RouteGroupBuilder group)
     {
-        builder.MapDelete(ApiEndpoints.Todos.Delete,
+        group.MapDelete(Route,
                 async Task<Results<NoContent, NotFound>> (
                     long id,
                     ITodoService service,
@@ -23,7 +25,8 @@ public static class DeleteTodoEndpoint
                         : TypedResults.NotFound();
                 })
             .WithName(Name)
-            .WithTags(ApiEndpoints.Todos.Tag)
-            .WithOpenApi();
+            .WithDescription(Description);
+
+        return group;
     }
 }

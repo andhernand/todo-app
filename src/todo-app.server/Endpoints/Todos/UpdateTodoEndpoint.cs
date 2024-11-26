@@ -1,19 +1,22 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using System.Net.Mime;
+
+using Microsoft.AspNetCore.Http.HttpResults;
 
 using TodoApp.Contracts.Requests;
 using TodoApp.Contracts.Responses;
 using TodoApp.Core.Services;
-using TodoApp.Server.Endpoints.Todos.Filters;
 
 namespace TodoApp.Server.Endpoints.Todos;
 
 public static class UpdateTodoEndpoint
 {
     private const string Name = "UpdateTodo";
+    private const string Description = "Update a Todo";
+    private const string Route = "{id:long}";
 
-    public static void MapUpdateTodoEndpoint(this IEndpointRouteBuilder builder)
+    public static RouteGroupBuilder MapUpdateTodoEndpoint(this RouteGroupBuilder group)
     {
-        builder.MapPut(ApiEndpoints.Todos.Update,
+        group.MapPut(Route,
                 async Task<Results<Ok<TodoResponse>, NotFound, ValidationProblem>> (
                     long id,
                     UpdateTodoRequest request,
@@ -27,9 +30,10 @@ public static class UpdateTodoEndpoint
                         : TypedResults.Ok(updatedTodo);
                 })
             .WithName(Name)
-            .WithTags(ApiEndpoints.Todos.Tag)
-            .Accepts<UpdateTodoRequest>(isOptional: false, contentType: "application/json")
-            .AddEndpointFilter<RequestValidationFilter<UpdateTodoRequest>>()
-            .WithOpenApi();
+            .WithDescription(Description)
+            .Accepts<UpdateTodoRequest>(false, MediaTypeNames.Application.Json)
+            .AddEndpointFilter<RequestValidationFilter<UpdateTodoRequest>>();
+
+        return group;
     }
 }

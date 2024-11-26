@@ -4,8 +4,17 @@ namespace TodoApp.Server.Endpoints;
 
 public static class EndpointsMapper
 {
-    public static void MapApiEndpoints(this IEndpointRouteBuilder builder)
+    public static IEndpointRouteBuilder MapTodoApiEndpoints(this IEndpointRouteBuilder builder)
     {
-        builder.MapTodosEndpoints();
+        builder.MapGroup("api/todos")
+            .MapCreateTodoEndpoint()
+            .MapGetAllTodosEndpoint()
+            .MapGetTodoByIdEndpoint()
+            .MapUpdateTodoEndpoint()
+            .MapDeleteTodoEndpoint()
+            .WithTags("Todos")
+            .WithOpenApi();
+
+        return builder;
     }
 }
