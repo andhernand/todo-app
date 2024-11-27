@@ -41,7 +41,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '^/api/todos': {
+      '^/api/v1/todos': {
         target,
         secure: false,
       },

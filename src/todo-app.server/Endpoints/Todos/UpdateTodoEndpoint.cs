@@ -32,7 +32,8 @@ public static class UpdateTodoEndpoint
             .WithName(Name)
             .WithDescription(Description)
             .Accepts<UpdateTodoRequest>(false, MediaTypeNames.Application.Json)
-            .AddEndpointFilter<RequestValidationFilter<UpdateTodoRequest>>();
+            .AddEndpointFilter<RequestValidationFilter<UpdateTodoRequest>>()
+            .MapToApiVersion(1);
 
         return group;
     }
