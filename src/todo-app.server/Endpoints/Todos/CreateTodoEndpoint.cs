@@ -32,7 +32,8 @@ public static class CreateTodoEndpoint
             .WithName(Name)
             .WithDescription(Description)
             .Accepts<CreateTodoRequest>(false, MediaTypeNames.Application.Json)
-            .AddEndpointFilter<RequestValidationFilter<CreateTodoRequest>>();
+            .AddEndpointFilter<RequestValidationFilter<CreateTodoRequest>>()
+            .MapToApiVersion(1);
 
         return group;
     }

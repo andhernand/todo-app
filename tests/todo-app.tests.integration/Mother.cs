@@ -9,7 +9,7 @@ namespace Todo.App.Tests.Integration;
 
 public static class Mother
 {
-    public const string TodosBasePath = "/api/todos";
+    public const string TodosBasePath = "/api/v1/todos";
 
     public static CreateTodoRequest GenerateCreateTodoRequest(
         string? description = default,

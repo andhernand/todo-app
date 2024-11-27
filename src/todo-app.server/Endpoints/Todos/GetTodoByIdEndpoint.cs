@@ -28,7 +28,8 @@ public static class GetTodoByIdEndpoint
                     return TypedResults.Ok(todo);
                 })
             .WithName(Name)
-            .WithDescription(Description);
+            .WithDescription(Description)
+            .MapToApiVersion(1);
 
         return group;
     }

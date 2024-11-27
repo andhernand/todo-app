@@ -25,7 +25,8 @@ public static class DeleteTodoEndpoint
                         : TypedResults.NotFound();
                 })
             .WithName(Name)
-            .WithDescription(Description);
+            .WithDescription(Description)
+            .MapToApiVersion(1);
 
         return group;
     }
