@@ -258,6 +258,32 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
+    [Fact]
+    public async Task Swagger_WhenCalled_ShouldReturnOk()
+    {
+        // Arrange
+        using var client = factory.CreateClient();
+
+        // Act
+        var response = await client.GetAsync("/swagger/index.html");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task Swagger_WhenJsonIsCalled_ShouldReturnOk()
+    {
+        // Arrange
+        using var client = factory.CreateClient();
+
+        // Act
+        var response = await client.GetAsync("/swagger/v1/swagger.json");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
     public Task InitializeAsync() => Task.CompletedTask;
 
     public async Task DisposeAsync()
