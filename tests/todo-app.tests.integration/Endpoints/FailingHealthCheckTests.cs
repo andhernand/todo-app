@@ -1,8 +1,8 @@
 ﻿using System.Net;
 
-using FluentAssertions;
-
 using Microsoft.AspNetCore.Mvc.Testing;
+
+using Shouldly;
 
 using TodoApp.Server;
 
@@ -32,9 +32,9 @@ public class FailingHealthCheckTests(FailingHealthCheckFactory factory)
         var response = await client.GetAsync("/_health");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.ServiceUnavailable);
+        response.StatusCode.ShouldBe(HttpStatusCode.ServiceUnavailable);
 
         var message = await response.Content.ReadAsStringAsync();
-        message.Should().Be("Unhealthy");
+        message.ShouldBe("Unhealthy");
     }
 }
