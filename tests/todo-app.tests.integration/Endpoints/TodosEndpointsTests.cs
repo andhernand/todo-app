@@ -1,8 +1,8 @@
 ﻿using System.Net;
 
-using FluentAssertions;
-
 using Microsoft.AspNetCore.Mvc;
+
+using Shouldly;
 
 using TodoApp.Contracts.Responses;
 
@@ -22,10 +22,10 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
         var response = await client.GetAsync("/_health");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
         var message = await response.Content.ReadAsStringAsync();
-        message.Should().Be("Healthy");
+        message.ShouldBe("Healthy");
     }
 
     [Fact]
@@ -43,17 +43,17 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
         var response = await client.PostAsJsonAsync(Mother.TodosBasePath, request);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Created);
+        response.StatusCode.ShouldBe(HttpStatusCode.Created);
 
         var actual = await response.Content.ReadFromJsonAsync<TodoResponse>();
 
-        response.Headers.Location.Should().Be($"http://localhost{Mother.TodosBasePath}/{actual!.Id}");
+        response.Headers.Location.ShouldBe(new Uri($"http://localhost{Mother.TodosBasePath}/{actual!.Id}"));
         _createdTodos.Add(actual.Id);
 
-        actual.Id.Should().NotBe(default);
-        actual.Id.Should().BeGreaterOrEqualTo(1);
-        actual.Description.Should().Be(expected.Description);
-        actual.IsCompleted.Should().Be(expected.IsCompleted);
+        actual.Id.ShouldNotBe(0);
+        actual.Id.ShouldBeGreaterThanOrEqualTo(1);
+        actual.Description.ShouldBe(expected.Description);
+        actual.IsCompleted.ShouldBe(expected.IsCompleted);
     }
 
     [Fact]
@@ -62,18 +62,16 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
         // Arrange
         using var client = factory.CreateClient();
         var request = Mother.GenerateCreateTodoRequest(description: "");
-        var expected = Mother.GenerateValidationProblemDetails(new Dictionary<string, string[]>
-        {
-            { "Description", ["'Description' must not be empty."] }
-        });
 
         // Act
         var response = await client.PostAsJsonAsync(Mother.TodosBasePath, request);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         var errors = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
-        errors.Should().BeEquivalentTo(expected);
+        errors!.Errors.Count.ShouldBe(1);
+        errors.Errors.ShouldContainKey("Description");
+        errors.Errors["Description"][0].ShouldBe("'Description' must not be empty.");
     }
 
     [Fact]
@@ -88,9 +86,9 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
         var response = await client.GetAsync($"{Mother.TodosBasePath}/{expected.Id}");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
         var actual = await response.Content.ReadFromJsonAsync<TodoResponse>();
-        actual.Should().BeEquivalentTo(expected);
+        actual.ShouldBeEquivalentTo(expected);
     }
 
     [Fact]
@@ -104,7 +102,7 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
         var response = await client.GetAsync($"{Mother.TodosBasePath}/{badId}");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     [Fact]
@@ -126,9 +124,9 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
         var response = await client.GetAsync(Mother.TodosBasePath);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var actual = await response.Content.ReadFromJsonAsync<IEnumerable<TodoResponse>>();
-        actual.Should().BeEquivalentTo(expected);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        var actual = await response.Content.ReadFromJsonAsync<TodoResponse[]>();
+        actual.ShouldBeEquivalentTo(expected);
     }
 
     [Fact]
@@ -141,9 +139,9 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
         var response = await client.GetAsync(Mother.TodosBasePath);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
         var actual = await response.Content.ReadFromJsonAsync<IEnumerable<TodoResponse>>();
-        actual.Should().BeEmpty();
+        actual.ShouldBeEmpty();
     }
 
     [Fact]
@@ -165,9 +163,9 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
         var response = await client.PutAsJsonAsync($"{Mother.TodosBasePath}/{todo.Id}", request);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
         var actual = await response.Content.ReadFromJsonAsync<TodoResponse>();
-        actual.Should().BeEquivalentTo(expected);
+        actual.ShouldBeEquivalentTo(expected);
     }
 
     [Fact]
@@ -176,18 +174,16 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
         // Arrange
         using var client = factory.CreateClient();
         var request = Mother.GenerateUpdateTodoRequest(-2);
-        var expected = Mother.GenerateValidationProblemDetails(new Dictionary<string, string[]>
-        {
-            { "Id", ["'Id' must be greater than or equal to '1'."] }
-        });
 
         // Act
         var response = await client.PutAsJsonAsync($"{Mother.TodosBasePath}/{-2}", request);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         var errors = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
-        errors.Should().BeEquivalentTo(expected);
+        errors!.Errors.Count.ShouldBe(1);
+        errors.Errors.ShouldContainKey("Id");
+        errors.Errors["Id"][0].ShouldBe("'Id' must be greater than or equal to '1'.");
     }
 
     [Fact]
@@ -200,18 +196,16 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
         _createdTodos.Add(todo.Id);
 
         var request = Mother.GenerateUpdateTodoRequest(todo.Id, "", todo.IsCompleted);
-        var expected = Mother.GenerateValidationProblemDetails(new Dictionary<string, string[]>
-        {
-            { "Description", ["'Description' must not be empty."] }
-        });
 
         // Act
         var response = await client.PutAsJsonAsync($"{Mother.TodosBasePath}/{todo.Id}", request);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         var errors = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
-        errors.Should().BeEquivalentTo(expected);
+        errors!.Errors.Count.ShouldBe(1);
+        errors.Errors.ShouldContainKey("Description");
+        errors.Errors["Description"][0].ShouldBe("'Description' must not be empty.");
     }
 
     [Fact]
@@ -226,7 +220,7 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
         var response = await client.PutAsJsonAsync($"{Mother.TodosBasePath}/{badId}", request);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     [Fact]
@@ -241,7 +235,7 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
         var response = await client.DeleteAsync($"{Mother.TodosBasePath}/{createdTodo.Id}");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
     }
 
     [Fact]
@@ -255,7 +249,7 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
         var response = await client.DeleteAsync($"{Mother.TodosBasePath}/{badId}");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     [Fact]
@@ -268,7 +262,7 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
         var response = await client.GetAsync("/swagger/index.html");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
     }
 
     [Fact]
@@ -281,7 +275,7 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
         var response = await client.GetAsync("/swagger/v1/swagger.json");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
     }
 
     public Task InitializeAsync() => Task.CompletedTask;

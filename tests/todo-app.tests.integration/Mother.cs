@@ -1,7 +1,5 @@
 ﻿using Bogus;
 
-using Microsoft.AspNetCore.Mvc;
-
 using TodoApp.Contracts.Requests;
 using TodoApp.Contracts.Responses;
 
@@ -12,8 +10,8 @@ public static class Mother
     public const string TodosBasePath = "/api/v1/todos";
 
     public static CreateTodoRequest GenerateCreateTodoRequest(
-        string? description = default,
-        bool? isCompleted = default)
+        string? description = null,
+        bool? isCompleted = null)
     {
         return new Faker<CreateTodoRequest>()
             .RuleFor(x => x.Description, f => description ?? f.Lorem.Sentence(3))
@@ -22,9 +20,9 @@ public static class Mother
     }
 
     public static UpdateTodoRequest GenerateUpdateTodoRequest(
-        long? id = default,
-        string? description = default,
-        bool? isCompleted = default)
+        long? id = null,
+        string? description = null,
+        bool? isCompleted = null)
     {
         return new Faker<UpdateTodoRequest>()
             .RuleFor(x => x.Id, f => id ?? f.Random.Long())
@@ -39,20 +37,10 @@ public static class Mother
         return faker.Random.Long(min, max);
     }
 
-    public static ValidationProblemDetails GenerateValidationProblemDetails(Dictionary<string, string[]> errors)
-    {
-        return new ValidationProblemDetails
-        {
-            Type = "https://tools.ietf.org/html/rfc9110#section-15.5.1",
-            Status = StatusCodes.Status400BadRequest,
-            Errors = errors
-        };
-    }
-
     public static async Task<TodoResponse> CreateTodoAsync(
         HttpClient client,
-        string? description = default,
-        bool? isCompleted = default)
+        string? description = null,
+        bool? isCompleted = null)
     {
         var request = GenerateCreateTodoRequest(description: description, isCompleted: isCompleted);
         var response = await client.PostAsJsonAsync(TodosBasePath, request);
