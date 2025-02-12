@@ -27,16 +27,16 @@ updates:
     groups:
       contracts:
         patterns:
-          - "src/todo-app.contracts/*"
+          - "src/todo-app.contracts/todo-app.contracts.csproj"
       core:
         patterns:
-          - "src/todo-app.core/*"
+          - "src/todo-app.core/todo-app.core.csproj"
       server:
         patterns:
-          - "src/todo-app.server/*"
+          - "src/todo-app.server/todo-app.server.csproj"
       tests:
         patterns:
-          - "tests/todo-app.tests.integration/*"
+          - "tests/todo-app.tests.integration/todo-app.tests.integration.csproj"
     commit-message:
       prefix: "NuGet"
       include: "scope"
@@ -51,10 +51,10 @@ updates:
     groups:
       dependencies:
         patterns:
-          - "dependencies/*"
+          - "src/todo-app.client/package.json"
       dev-dependencies:
         patterns:
-          - "devDependencies/*"
+          - "src/todo-app.client/package.json"
     commit-message:
       prefix: "npm"
       include: "scope"
