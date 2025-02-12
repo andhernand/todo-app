@@ -1,35 +1,63 @@
 version: 2
+
+registries:
+  public-nuget:
+    type: nuget-feed
+    url: https://api.nuget.org/v3/index.json
+
 updates:
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "friday"
-      time: "01:00"
-      timezone: "America/Denver"
+      interval: "daily"
     commit-message:
       prefix: "GitHub Actions"
       include: "scope"
+    labels:
+      - "dependencies"
+    open-pull-requests-limit: 15
 
   - package-ecosystem: "nuget"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "friday"
-      time: "01:00"
-      timezone: "America/Denver"
+      interval: "daily"
+    registries:
+      - public-nuget
+    groups:
+      contracts:
+        patterns:
+          - "src/todo-app.contracts/*"
+      core:
+        patterns:
+          - "src/todo-app.core/*"
+      server:
+        patterns:
+          - "src/todo-app.server/*"
+      tests:
+        patterns:
+          - "tests/todo-app.tests.integration/*"
     commit-message:
       prefix: "NuGet"
       include: "scope"
+    labels:
+      - "dependencies"
+    open-pull-requests-limit: 15
 
   - package-ecosystem: "npm"
     directory: "/src/todo-app.client"
     schedule:
-      interval: "weekly"
-      day: "friday"
-      time: "01:00"
-      timezone: "America/Denver"
+      interval: "daily"
+    groups:
+      dependencies:
+        patterns:
+          - "dependencies/*"
+      dev-dependencies:
+        patterns:
+          - "devDependencies/*"
     commit-message:
       prefix: "npm"
       include: "scope"
+    labels:
+      - "dependencies"
+    open-pull-requests-limit: 15
