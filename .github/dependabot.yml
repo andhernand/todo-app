@@ -19,26 +19,34 @@ updates:
     open-pull-requests-limit: 15
 
   - package-ecosystem: "nuget"
-    directory: "/"
+    directory: "/src"
     schedule:
       interval: "daily"
     registries:
       - public-nuget
     groups:
-      contracts:
+      all-dependencies:
         patterns:
-          - "src/todo-app.contracts/todo-app.contracts.csproj"
-      core:
-        patterns:
-          - "src/todo-app.core/todo-app.core.csproj"
-      server:
-        patterns:
-          - "src/todo-app.server/todo-app.server.csproj"
-      tests:
-        patterns:
-          - "tests/todo-app.tests.integration/todo-app.tests.integration.csproj"
+          - "*"
     commit-message:
-      prefix: "NuGet"
+      prefix: "NuGet - src"
+      include: "scope"
+    labels:
+      - "dependencies"
+    open-pull-requests-limit: 15
+
+  - package-ecosystem: "nuget"
+    directory: "/tests"
+    schedule:
+      interval: "daily"
+    registries:
+      - public-nuget
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: "NuGet - tests"
       include: "scope"
     labels:
       - "dependencies"
@@ -49,12 +57,9 @@ updates:
     schedule:
       interval: "daily"
     groups:
-      dependencies:
+      all-dependencies:
         patterns:
-          - "src/todo-app.client/package.json"
-      dev-dependencies:
-        patterns:
-          - "src/todo-app.client/package.json"
+          - "*"
     commit-message:
       prefix: "npm"
       include: "scope"
