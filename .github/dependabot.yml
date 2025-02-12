@@ -19,7 +19,7 @@ updates:
     open-pull-requests-limit: 15
 
   - package-ecosystem: "nuget"
-    directory: "/src"
+    directory: "/"
     schedule:
       interval: "daily"
     registries:
@@ -29,24 +29,7 @@ updates:
         patterns:
           - "*"
     commit-message:
-      prefix: "NuGet - src"
-      include: "scope"
-    labels:
-      - "dependencies"
-    open-pull-requests-limit: 15
-
-  - package-ecosystem: "nuget"
-    directory: "/tests"
-    schedule:
-      interval: "daily"
-    registries:
-      - public-nuget
-    groups:
-      all-dependencies:
-        patterns:
-          - "*"
-    commit-message:
-      prefix: "NuGet - tests"
+      prefix: "NuGet"
       include: "scope"
     labels:
       - "dependencies"
