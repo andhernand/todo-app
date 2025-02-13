@@ -1,3 +1,5 @@
+using Scalar.AspNetCore;
+
 using Serilog;
 
 using TodoApp.Core.DependencyInjection;
@@ -11,8 +13,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, logConfig) =>
     logConfig.ReadFrom.Configuration(context.Configuration));
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options => options.OperationFilter<SwaggerDefaultValues>());
+builder.Services.AddOpenApi("v1", opts =>
+{
+    opts.AddDocumentTransformer<TodoAppDocumentTransformer>();
+    opts.ShouldInclude = description => description.GroupName is "v1";
+});
 
 builder.Services.AddHealthChecks()
     .AddCheck<DatabaseHealthCheck>(DatabaseHealthCheck.Name);
@@ -25,16 +30,8 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        foreach (var description in app.DescribeApiVersions())
-        {
-            options.SwaggerEndpoint(
-                $"/swagger/{description.GroupName}/swagger.json",
-                $"Client.Dashboard.WebApi.{description.GroupName}");
-        }
-    });
+    app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();
