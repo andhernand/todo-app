@@ -510,3 +510,4 @@ dist-ssr
 # ssl certificate files
 todo-app.client.key
 todo-app.client.pem
+coverage/
