@@ -4,21 +4,31 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - "**/*.md"
+      - "**/*.gitignore"
+      - "**/*.gitattributes"
+
   pull_request:
+    paths-ignore:
+      - "**/*.md"
+      - "**/*.gitignore"
+      - "**/*.gitattributes"
+
+  workflow_dispatch:
 
 jobs:
   build:
     name: Node.js CI
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      pull-requests: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4.2.2
-
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v4.3.0
-        with:
-          global-json-file: global.json
 
       - name: Set up Node.js
         uses: actions/setup-node@v4.2.0
@@ -26,6 +36,18 @@ jobs:
           node-version: 22.x
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4.3.0
+        with:
+          global-json-file: global.json
+
+      - name: Print .NET info
+        run: dotnet --info
+
+      - name: Install & trust dev-certs
+        id: install-dev-certs
+        run: dotnet dev-certs https --trust
 
       - name: Install dependencies
         run: npm ci
@@ -35,14 +57,34 @@ jobs:
         run: npm run lint
         working-directory: src/todo-app.client
 
-      - name: Prettier Check
-        run: npm run pcheck
+      - name: Prettier Check Formatting
+        run: npm run check-format
         working-directory: src/todo-app.client
 
-      - name: Vitest Run
-        run: npm run tests
+      - name: Run Tests
+        run: npm run test:ci
         working-directory: src/todo-app.client
 
       - name: Build application
         run: npm run build
         working-directory: src/todo-app.client
+
+      - name: Code Coverage Report
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: src/todo-app.client/coverage/cobertura-coverage.xml
+          badge: true
+          fail_below_min: false
+          format: markdown
+          hide_branch_rate: false
+          hide_complexity: false
+          indicators: true
+          output: both
+          thresholds: '90 90'
+
+      - name: Add Coverage PR Comment
+        uses: marocchino/sticky-pull-request-comment@v2.9.1
+        with:
+          header: 'Todo API Web Client CI'
+          recreate: true
+          path: code-coverage-results.md
