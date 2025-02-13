@@ -253,26 +253,26 @@ public class TodosEndpointsTests(TodoApiFactory factory) : IClassFixture<TodoApi
     }
 
     [Fact]
-    public async Task Swagger_WhenCalled_ShouldReturnOk()
+    public async Task Scalar_WhenCalled_ShouldReturnOk()
     {
         // Arrange
         using var client = factory.CreateClient();
 
         // Act
-        var response = await client.GetAsync("/swagger/index.html");
+        var response = await client.GetAsync("/scalar");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
     }
 
     [Fact]
-    public async Task Swagger_WhenJsonIsCalled_ShouldReturnOk()
+    public async Task OpenApi_WhenJsonIsCalled_ShouldReturnOk()
     {
         // Arrange
         using var client = factory.CreateClient();
 
         // Act
-        var response = await client.GetAsync("/swagger/v1/swagger.json");
+        var response = await client.GetAsync("/openapi/v1.json");
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
